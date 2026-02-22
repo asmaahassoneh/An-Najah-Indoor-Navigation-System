@@ -2,7 +2,6 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/db");
 const bcrypt = require("bcrypt");
 
-
 const User = sequelize.define(
   "User",
   {
@@ -15,7 +14,21 @@ const User = sequelize.define(
       defaultValue: "guest",
     },
     login: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    room: { type: DataTypes.STRING, allowNull: true }, 
+    roomId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "Rooms",
+        key: "id",
+      },
+      onDelete: "SET NULL",
+      onUpdate: "CASCADE",
+    },
+    hasRoom: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   },
   {
     hooks: {

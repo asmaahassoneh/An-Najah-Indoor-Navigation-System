@@ -8,7 +8,7 @@ export default function Register() {
     username: "",
     email: "",
     password: "",
-    role: "student",
+    roomId: "",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -63,9 +63,9 @@ export default function Register() {
         {formData.email.endsWith("@najah.edu") && (
           <input
             type="text"
-            name="room"
+            name="roomId"
             placeholder="Room (Professors only)"
-            value={formData.room}
+            value={formData.roomId}
             onChange={handleChange}
           />
         )}

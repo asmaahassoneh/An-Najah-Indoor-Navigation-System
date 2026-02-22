@@ -1,23 +1,41 @@
 const express = require("express");
 const router = express.Router();
 const UserController = require("../controllers/user.controller");
-
+const {
+  requireAuth,
+  requireRole,
+  requireSelfOrRole,
+} = require("../middleware/auth");
 
 router.post("/register", UserController.register);
 router.post("/login", UserController.login);
-router.post("/logout/:id", UserController.logout);
 
-router.get("/", UserController.getAll); 
-router.get("/id/:id", UserController.getById); 
-router.get("/name/:username", UserController.getByName); 
-router.get("/email/:email", UserController.getByEmail); 
-router.get("/role/:role", UserController.getByRole); 
+router.use(requireAuth);
 
-router.put("/change-password/:id", UserController.changePassword);
-router.put("/id/:id", UserController.updateById); 
-router.put("/email/:email", UserController.updateByEmail); 
+router.post("/logout/:id", requireSelfOrRole("admin"), UserController.logout);
 
-router.delete("/id/:id", UserController.deleteById); 
-router.delete("/", UserController.deleteAll); 
+router.get("/", requireRole("admin"), UserController.getAll);
+router.get("/id/:id", requireSelfOrRole("admin"), UserController.getById);
 
+router.get("/name/:username", requireRole("admin"), UserController.getByName);
+router.get("/email/:email", requireRole("admin"), UserController.getByEmail);
+router.get("/role/:role", requireRole("admin"), UserController.getByRole);
+
+router.put(
+  "/change-password/:id",
+  requireSelfOrRole("admin"),
+  UserController.changePassword,
+);
+
+router.put("/id/:id", requireSelfOrRole("admin"), UserController.updateById);
+
+router.put("/email/:email", requireRole("admin"), UserController.updateByEmail);
+
+router.delete("/", requireAuth, requireRole("admin"), UserController.deleteAll);
+router.delete(
+  "/id/:id",
+  requireAuth,
+  requireRole("admin"),
+  UserController.deleteById,
+);
 module.exports = router;

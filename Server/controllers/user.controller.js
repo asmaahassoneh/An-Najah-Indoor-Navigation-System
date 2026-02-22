@@ -3,7 +3,7 @@ const UserService = require("../services/user.service");
 class UserController {
   static async register(req, res) {
     try {
-      const { username, email, password, room } = req.body;
+      const { username, email, password, roomId } = req.body;
       if (!username || !email || !password) {
         return res
           .status(400)
@@ -14,7 +14,7 @@ class UserController {
         username,
         email,
         password,
-        room,
+        roomId,
       });
 
       return res.status(201).json({
@@ -24,7 +24,7 @@ class UserController {
           username: user.username,
           email: user.email,
           role: user.role,
-          room: user.room || null,
+          roomId: user.roomId || null,
         },
       });
     } catch (error) {
@@ -44,7 +44,7 @@ class UserController {
 
       return res.status(200).json({
         message: "Login successful",
-        token, 
+        token,
         user: {
           id: user.id,
           username: user.username,
@@ -91,7 +91,7 @@ class UserController {
 
   static async getAll(req, res) {
     try {
-      const users = await UserService.getAllUsers();
+      const users = await UserService.getAllUsers(req.user.id);
       res.json(users);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -136,7 +136,7 @@ class UserController {
   static async deleteById(req, res) {
     try {
       const { id } = req.params;
-      const result = await UserService.deleteUserById(id);
+      const result = await UserService.deleteUserById(id, req.user);
       if (!result) return res.status(404).json({ error: "User not found" });
       res.json({ message: "User deleted successfully" });
     } catch (error) {

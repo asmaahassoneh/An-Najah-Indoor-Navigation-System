@@ -15,9 +15,12 @@ export default function Navbar() {
         <div className="links">
           <NavLink to="/">Home</NavLink>
 
+          {user && (user.role === "student" || user.role === "professor") && (
+            <NavLink to="/my-schedule">My Schedule</NavLink>
+          )}
           {!user && <NavLink to="/register">Register</NavLink>}
           {!user && <NavLink to="/login">Login</NavLink>}
-
+          {user?.role === "admin" && <NavLink to="/admin">Admin</NavLink>}
           {user && <span className="user-pill">{user.username}</span>}
 
           {user && (
