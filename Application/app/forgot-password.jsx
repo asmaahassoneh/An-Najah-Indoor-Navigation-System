@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import Screen from "../src/components/Screen";
 import AppNavbar from "../src/components/AppNavbar";
 import useApi from "../src/services/useApi";
+import GlowBackground from "../src/components/GlowBackground";
 
 export default function ForgotPassword() {
   const router = useRouter();
@@ -31,6 +32,7 @@ export default function ForgotPassword() {
 
   return (
     <Screen padded={false}>
+      <GlowBackground />
       <AppNavbar />
       <View style={styles.wrap}>
         <Text style={styles.title}>Forgot Password</Text>

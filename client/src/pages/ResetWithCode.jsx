@@ -44,55 +44,93 @@ export default function ResetWithCode() {
   };
 
   return (
-    <div className="auth-page">
-      <h2>Reset Password</h2>
+    <div className="authPage">
+      <div className="authGlow" />
+      <div className="authNoise" />
 
-      <form className="auth-card" onSubmit={submit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          required
-          onChange={(e) => setEmail(e.target.value)}
-        />
+      <div className="authCard authCardEnter">
+        <div className="authTop">
+          <div className="authBadge">Confirm reset</div>
+          <h2 className="authTitle">Reset Password</h2>
+          <p className="authSub">Enter the code and choose a new password.</p>
+        </div>
 
-        <input
-          type="text"
-          placeholder="6-digit code"
-          value={code}
-          required
-          onChange={(e) => setCode(e.target.value)}
-        />
+        <form className="authForm" onSubmit={submit}>
+          <div className="field fieldEnter" style={{ animationDelay: "80ms" }}>
+            <input
+              className="authInput"
+              type="email"
+              placeholder="Email"
+              value={email}
+              required
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <span className="fieldGlow" />
+          </div>
 
-        <PasswordInput
-          name="newPassword"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          placeholder="New password"
-          autoComplete="new-password"
-          required
-        />
+          <div className="field fieldEnter" style={{ animationDelay: "140ms" }}>
+            <input
+              className="authInput"
+              type="text"
+              placeholder="6-digit code"
+              value={code}
+              required
+              onChange={(e) => setCode(e.target.value)}
+              inputMode="numeric"
+              maxLength={6}
+            />
+            <span className="fieldGlow" />
+          </div>
 
-        <PasswordInput
-          name="confirmPassword"
-          value={confirm}
-          onChange={(e) => setConfirm(e.target.value)}
-          placeholder="Confirm new password"
-          autoComplete="new-password"
-          required
-        />
+          <div className="field fieldEnter" style={{ animationDelay: "200ms" }}>
+            <div className="authPasswordWrap">
+              <PasswordInput
+                name="newPassword"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="New password"
+                autoComplete="new-password"
+                required
+              />
+            </div>
+            <span className="fieldGlow" />
+          </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Resetting..." : "Reset password"}
-        </button>
+          <div className="field fieldEnter" style={{ animationDelay: "260ms" }}>
+            <div className="authPasswordWrap">
+              <PasswordInput
+                name="confirmPassword"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                placeholder="Confirm new password"
+                autoComplete="new-password"
+                required
+              />
+            </div>
+            <span className="fieldGlow" />
+          </div>
 
-        <button type="button" className="secondary-btn" onClick={() => navigate("/login")}>
-          Back to Login
-        </button>
+          <button
+            className="authBtn authBtnEnter"
+            type="submit"
+            disabled={loading}
+          >
+            <span className="btnShine" />
+            {loading ? "Resetting..." : "Reset password"}
+          </button>
 
-        {err && <p className="error-msg">{err}</p>}
-        {msg && <p className="success-msg">{msg}</p>}
-      </form>
+          <button
+            type="button"
+            className="authBtn authBtnSecondary"
+            onClick={() => navigate("/login")}
+          >
+            Back to Login
+          </button>
+
+          {!!err && <p className="authMsg authErr">{err}</p>}
+          {!!msg && <p className="authMsg authOk">{msg}</p>}
+        </form>
+      </div>
     </div>
   );
 }

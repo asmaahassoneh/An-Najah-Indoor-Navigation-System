@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
+import GlowBackground from "../src/components/GlowBackground";
 
 import useApi from "../src/services/useApi";
 import { AuthContext } from "../src/context/auth.context";
@@ -42,6 +43,7 @@ export default function Login() {
 
   return (
     <Screen padded={false}>
+      <GlowBackground />
       <AppNavbar />
 
       <View style={styles.wrap}>

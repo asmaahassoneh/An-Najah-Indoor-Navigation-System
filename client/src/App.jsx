@@ -1,5 +1,9 @@
 import "./styles/App.css";
 import "./styles/navbar.css";
+import "./styles/auth-animated.css";
+import "./styles/admin.css";
+import "./styles/schedule.css";
+
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -7,7 +11,6 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import ResetPassword from "./pages/ResetPassword";
-import AdminDashboard from "./pages/AdminDashboard";
 import AdminRoute from "./routes/AdminRoute";
 import ImportSchedule from "./pages/ImportSchedule";
 import MySchedule from "./pages/MySchedule";
@@ -15,6 +18,9 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetWithCode from "./pages/ResetWithCode";
+import AdminRooms from "./pages/Admin/AdminRooms";
+import AdminUsers from "./pages/Admin/AdminUsers";
+import AdminHome from "./pages/Admin/AdminHome";
 
 export default function App() {
   return (
@@ -51,7 +57,25 @@ export default function App() {
           path="/admin"
           element={
             <AdminRoute>
-              <AdminDashboard />
+              <AdminHome />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/users"
+          element={
+            <AdminRoute>
+              <AdminUsers />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/rooms"
+          element={
+            <AdminRoute>
+              <AdminRooms />
             </AdminRoute>
           }
         />

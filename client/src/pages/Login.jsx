@@ -23,12 +23,7 @@ export default function Login() {
 
     try {
       const res = await API.post("/users/login", formData);
-
-      const user = res.data.user;
-      const token = res.data.token;
-
-      login(user, token);
-
+      login(res.data.user, res.data.token);
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
@@ -38,83 +33,67 @@ export default function Login() {
   };
 
   return (
-    <div
-      style={{ maxWidth: "520px", margin: "120px auto 0", padding: "0 16px" }}
-    >
-      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Login</h2>
+    <div className="authPage">
+      <div className="authGlow" />
+      <div className="authNoise" />
 
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: "grid",
-          gap: "14px",
-          background: "rgba(255,255,255,0.05)",
-          border: "1px solid rgba(255,255,255,0.08)",
-          padding: "22px",
-          borderRadius: "16px",
-          backdropFilter: "blur(10px)",
-        }}
-      >
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          style={{
-            padding: "12px 14px",
-            borderRadius: "12px",
-            border: "1px solid rgba(255,255,255,0.12)",
-            background: "rgba(255,255,255,0.06)",
-            color: "white",
-            outline: "none",
-          }}
-        />
-        <PasswordInput
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Password"
-          autoComplete="current-password"
-          required
-        />
-
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            marginTop: "6px",
-            padding: "12px",
-            borderRadius: "12px",
-            border: "none",
-            cursor: loading ? "not-allowed" : "pointer",
-            background: "#8f5cff",
-            color: "white",
-            fontWeight: "700",
-            transition: "0.25s ease",
-            opacity: loading ? 0.7 : 1,
-          }}
-        >
-          {loading ? "Logging in..." : "Login"}
-        </button>
-
-        <div className="auth-links">
-          <button
-            type="button"
-            className="link-btn"
-            onClick={() => navigate("/forgot-password")}
-          >
-            Forgot password?
-          </button>
+      <div className="authCard authCardEnter">
+        <div className="authTop">
+          <div className="authBadge">Welcome back</div>
+          <h2 className="authTitle">Login</h2>
+          <p className="authSub">Access your account securely.</p>
         </div>
 
-        {error && (
-          <p style={{ margin: 0, color: "#ff6b6b", textAlign: "center" }}>
-            {error}
-          </p>
-        )}
-      </form>
+        <form className="authForm" onSubmit={handleSubmit}>
+          <div className="field fieldEnter" style={{ animationDelay: "80ms" }}>
+            <input
+              className="authInput"
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+            <span className="fieldGlow" />
+          </div>
+
+          <div className="field fieldEnter" style={{ animationDelay: "140ms" }}>
+            <div className="authPasswordWrap">
+              <PasswordInput
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Password"
+                autoComplete="current-password"
+                required
+              />
+            </div>
+            <span className="fieldGlow" />
+          </div>
+
+          <button
+            className="authBtn authBtnEnter"
+            type="submit"
+            disabled={loading}
+          >
+            <span className="btnShine" />
+            {loading ? "Logging in..." : "Login"}
+          </button>
+
+          <div className="authLinks">
+            <button
+              type="button"
+              className="link-btn"
+              onClick={() => navigate("/forgot-password")}
+            >
+              Forgot password?
+            </button>
+          </div>
+
+          {!!error && <p className="authMsg authErr">{error}</p>}
+        </form>
+      </div>
     </div>
   );
 }

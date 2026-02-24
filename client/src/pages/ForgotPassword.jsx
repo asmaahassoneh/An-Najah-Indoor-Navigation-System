@@ -30,29 +30,51 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="auth-page">
-      <h2>Forgot Password</h2>
+    <div className="authPage">
+      <div className="authGlow" />
+      <div className="authNoise" />
 
-      <form className="auth-card" onSubmit={sendCode}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          required
-          onChange={(e) => setEmail(e.target.value)}
-        />
+      <div className="authCard authCardEnter">
+        <div className="authTop">
+          <div className="authBadge">Reset access</div>
+          <h2 className="authTitle">Forgot Password</h2>
+          <p className="authSub">Enter your email and we’ll send you a code.</p>
+        </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Sending..." : "Send code"}
-        </button>
+        <form className="authForm" onSubmit={sendCode}>
+          <div className="field fieldEnter" style={{ animationDelay: "80ms" }}>
+            <input
+              className="authInput"
+              type="email"
+              placeholder="Email"
+              value={email}
+              required
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <span className="fieldGlow" />
+          </div>
 
-        <button type="button" className="secondary-btn" onClick={() => navigate("/login")}>
-          Back to Login
-        </button>
+          <button
+            className="authBtn authBtnEnter"
+            type="submit"
+            disabled={loading}
+          >
+            <span className="btnShine" />
+            {loading ? "Sending..." : "Send code"}
+          </button>
 
-        {err && <p className="error-msg">{err}</p>}
-        {msg && <p className="success-msg">{msg}</p>}
-      </form>
+          <button
+            type="button"
+            className="authBtn authBtnSecondary"
+            onClick={() => navigate("/login")}
+          >
+            Back to Login
+          </button>
+
+          {!!err && <p className="authMsg authErr">{err}</p>}
+          {!!msg && <p className="authMsg authOk">{msg}</p>}
+        </form>
+      </div>
     </div>
   );
 }

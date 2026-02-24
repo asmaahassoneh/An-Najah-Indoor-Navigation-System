@@ -5,6 +5,7 @@ import Screen from "../src/components/Screen";
 import AppNavbar from "../src/components/AppNavbar";
 import PasswordInput from "../src/components/PasswordInput";
 import useApi from "../src/services/useApi";
+import GlowBackground from "../src/components/GlowBackground";
 
 export default function ResetWithCode() {
   const router = useRouter();
@@ -45,6 +46,7 @@ export default function ResetWithCode() {
 
   return (
     <Screen padded={false}>
+      <GlowBackground />
       <AppNavbar />
       <View style={styles.wrap}>
         <Text style={styles.title}>Reset Password</Text>

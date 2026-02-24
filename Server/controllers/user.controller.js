@@ -3,7 +3,7 @@ const UserService = require("../services/user.service");
 class UserController {
   static async register(req, res) {
     try {
-      const { username, email, password, roomId } = req.body;
+      const { username, email, password, roomCode } = req.body;
       if (!username || !email || !password) {
         return res
           .status(400)
@@ -14,7 +14,7 @@ class UserController {
         username,
         email,
         password,
-        roomId,
+        roomCode,
       });
 
       return res.status(201).json({
@@ -24,7 +24,7 @@ class UserController {
           username: user.username,
           email: user.email,
           role: user.role,
-          roomId: user.roomId || null,
+          roomCode: user.roomCode || null,
         },
       });
     } catch (error) {
@@ -182,6 +182,33 @@ class UserController {
       res.json(users);
     } catch (error) {
       res.status(500).json({ error: error.message });
+    }
+  }
+
+  static async updateProfessorRoom(req, res) {
+    try {
+      const { id } = req.params;
+      const { roomCode } = req.body;
+
+      const updated = await UserService.updateProfessorRoom({
+        targetUserId: id,
+        roomCode,
+        currentUser: req.user,
+      });
+
+      return res.json({
+        message: "Room updated successfully",
+        user: {
+          id: updated.id,
+          username: updated.username,
+          email: updated.email,
+          role: updated.role,
+          roomId: updated.roomId,
+          hasRoom: updated.hasRoom,
+        },
+      });
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
     }
   }
 }

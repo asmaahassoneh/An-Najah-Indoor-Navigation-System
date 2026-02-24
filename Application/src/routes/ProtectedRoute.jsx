@@ -1,15 +1,11 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
+import { Redirect } from "expo-router";
 import { AuthContext } from "../context/auth.context";
-import { useRouter } from "expo-router";
 
 export default function ProtectedRoute({ children }) {
-  const { user } = useContext(AuthContext);
-  const router = useRouter();
+  const { user, hydrating } = useContext(AuthContext);
 
-  useEffect(() => {
-    if (!user) router.replace("/login");
-  }, [user, router]);
-
-  if (!user) return null;
+  if (hydrating) return null;
+  if (!user) return <Redirect href="/login" />;
   return children;
 }

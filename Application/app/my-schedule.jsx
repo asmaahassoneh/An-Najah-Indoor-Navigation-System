@@ -6,6 +6,7 @@ import Screen from "../src/components/Screen";
 import AppNavbar from "../src/components/AppNavbar";
 import ProtectedRoute from "../src/routes/ProtectedRoute";
 import useApi from "../src/services/useApi";
+import GlowBackground from "../src/components/GlowBackground";
 
 export default function MySchedule() {
   return (
@@ -41,6 +42,7 @@ function Inner() {
 
   return (
     <Screen padded={false}>
+      <GlowBackground />
       <AppNavbar />
 
       <View style={styles.wrap}>

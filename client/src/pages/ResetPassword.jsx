@@ -18,14 +18,6 @@ export default function ResetPassword() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  if (!user) {
-    return (
-      <h2 style={{ marginTop: "120px", textAlign: "center" }}>
-        Not Authorized
-      </h2>
-    );
-  }
-
   const handleChange = (e) => {
     setData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -58,64 +50,113 @@ export default function ResetPassword() {
     }
   };
 
-  return (
-    <div
-      style={{ maxWidth: "520px", margin: "120px auto 0", padding: "0 16px" }}
-    >
-      <h2 style={{ textAlign: "center", marginBottom: "16px" }}>
-        Reset Password
-      </h2>
+  if (!user) {
+    return (
+      <div className="authPage">
+        <div className="authGlow" />
+        <div className="authNoise" />
 
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: "grid",
-          gap: "12px",
-          background: "rgba(255,255,255,0.05)",
-          border: "1px solid rgba(255,255,255,0.08)",
-          padding: "22px",
-          borderRadius: "16px",
-          backdropFilter: "blur(10px)",
-        }}
-      >
-        <PasswordInput
-          name="oldPassword"
-          label="Old Password"
-          value={data.oldPassword}
-          onChange={handleChange}
-          autoComplete="current-password"
-        />
-
-        <PasswordInput
-          name="newPassword"
-          label="New Password"
-          value={data.newPassword}
-          onChange={handleChange}
-          autoComplete="new-password"
-        />
-
-        <PasswordInput
-          name="confirmPassword"
-          label="Confirm New Password"
-          value={data.confirmPassword}
-          onChange={handleChange}
-          autoComplete="new-password"
-        />
-        <button type="submit" disabled={loading} className="update-btn">
-          {loading ? "Updating..." : "Update Password"}
-        </button>
-
-        <button
-          type="button"
-          className="icon-btn"
-          onClick={() => navigate("/profile")}
+        <div
+          className="authCard authCardEnter"
+          style={{ width: "min(520px, 92vw)" }}
         >
-          Back to Profile
-        </button>
+          <div className="authTop">
+            <div className="authBadge">Restricted</div>
+            <h2 className="authTitle">Not Authorized</h2>
+            <p className="authSub">Please login to continue.</p>
+          </div>
 
-        {error && <p className="error-msg">{error}</p>}
-        {message && <p className="success-msg">{message}</p>}
-      </form>
+          <button
+            className="authBtn authBtnEnter"
+            onClick={() => navigate("/login")}
+          >
+            <span className="btnShine" />
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="authPage">
+      <div className="authGlow" />
+      <div className="authNoise" />
+
+      <div
+        className="authCard authCardEnter"
+        style={{ width: "min(520px, 92vw)" }}
+      >
+        <div className="authTop">
+          <div className="authBadge">Security</div>
+          <h2 className="authTitle">Reset Password</h2>
+          <p className="authSub">Update your password securely.</p>
+        </div>
+
+        <form className="authForm" onSubmit={handleSubmit}>
+          <div className="field fieldEnter" style={{ animationDelay: "80ms" }}>
+            <div className="authPasswordWrap">
+              <PasswordInput
+                name="oldPassword"
+                label="Old Password"
+                value={data.oldPassword}
+                onChange={handleChange}
+                autoComplete="current-password"
+                required
+              />
+            </div>
+            <span className="fieldGlow" />
+          </div>
+
+          <div className="field fieldEnter" style={{ animationDelay: "140ms" }}>
+            <div className="authPasswordWrap">
+              <PasswordInput
+                name="newPassword"
+                label="New Password"
+                value={data.newPassword}
+                onChange={handleChange}
+                autoComplete="new-password"
+                required
+              />
+            </div>
+            <span className="fieldGlow" />
+          </div>
+
+          <div className="field fieldEnter" style={{ animationDelay: "200ms" }}>
+            <div className="authPasswordWrap">
+              <PasswordInput
+                name="confirmPassword"
+                label="Confirm New Password"
+                value={data.confirmPassword}
+                onChange={handleChange}
+                autoComplete="new-password"
+                required
+              />
+            </div>
+            <span className="fieldGlow" />
+          </div>
+
+          <button
+            className="authBtn authBtnEnter"
+            type="submit"
+            disabled={loading}
+          >
+            <span className="btnShine" />
+            {loading ? "Updating..." : "Update Password"}
+          </button>
+
+          <button
+            type="button"
+            className="authBtn authBtnSecondary"
+            onClick={() => navigate("/profile")}
+          >
+            Back to Profile
+          </button>
+
+          {!!error && <p className="authMsg authErr">{error}</p>}
+          {!!message && <p className="authMsg authOk">{message}</p>}
+        </form>
+      </div>
     </div>
   );
 }

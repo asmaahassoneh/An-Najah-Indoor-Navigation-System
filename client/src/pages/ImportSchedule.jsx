@@ -1,11 +1,13 @@
 import { useState } from "react";
 import API from "../services/api";
 import { parseZajelText } from "../utils/parseZajelSchedule";
+import { useNavigate } from "react-router-dom";
 
 export default function ImportSchedule() {
   const [raw, setRaw] = useState("");
   const [items, setItems] = useState([]);
   const [msg, setMsg] = useState("");
+  const navigate = useNavigate();
 
   const preview = () => {
     const parsed = parseZajelText(raw);
@@ -25,65 +27,99 @@ export default function ImportSchedule() {
     }
   };
 
+  const isError = msg && !msg.includes("✅");
+
   return (
-    <div style={{ maxWidth: 1000, margin: "120px auto", padding: 16 }}>
-      <h2>Import My Schedule</h2>
-      <p style={{ opacity: 0.85 }}>
-        Zajel → select timetable table → Copy → Paste here → Preview → Save
-      </p>
+    <div className="authPage">
+      <div className="authGlow" />
+      <div className="authNoise" />
 
-      <textarea
-        rows={10}
-        value={raw}
-        onChange={(e) => setRaw(e.target.value)}
-        style={{ width: "100%", padding: 12, borderRadius: 12 }}
-        placeholder="Paste from Zajel..."
-      />
+      <div className="authCard authCardEnter importCard">
+        <div className="importTop">
+          <div>
+            <div className="authBadge">Import</div>
+            <h2 className="importTitle">Import My Schedule</h2>
+            <p className="authSub">
+              Zajel → select timetable table → Copy → Paste here → Preview →
+              Save
+            </p>
+          </div>
 
-      <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
-        <button onClick={preview}>Preview</button>
-        <button onClick={save} disabled={!items.length}>
-          Save
-        </button>
-      </div>
-
-      {msg && <p style={{ marginTop: 10 }}>{msg}</p>}
-
-      {!!items.length && (
-        <div style={{ marginTop: 16, overflowX: "auto" }}>
-          <table
-            style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}
+          <button
+            className="authBtn authBtnSecondary importBackBtn"
+            onClick={() => navigate("/my-schedule")}
           >
-            <thead>
-              <tr>
-                <th>Section</th>
-                <th>Name</th>
-                <th>Day</th>
-                <th>Time</th>
-                <th>Room</th>
-                <th>Instructor</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((x, i) => (
-                <tr
-                  key={i}
-                  style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}
-                >
-                  <td>{x.sectionCode}</td>
-                  <td>{x.courseName}</td>
-                  <td>{x.day}</td>
-                  <td>
-                    {x.startTime} - {x.endTime}
-                  </td>
-                  <td>{x.roomCode}</td>
-                  <td>{x.instructor}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            Back
+          </button>
         </div>
-      )}
+
+        <div className="field fieldEnter" style={{ animationDelay: "80ms" }}>
+          <textarea
+            className="importTextarea"
+            rows={10}
+            value={raw}
+            onChange={(e) => setRaw(e.target.value)}
+            placeholder="Paste from Zajel..."
+          />
+          <span className="fieldGlow" />
+        </div>
+
+        <div className="importActions">
+          <button
+            className="authBtn importActionBtn"
+            type="button"
+            onClick={preview}
+          >
+            <span className="btnShine" />
+            Preview
+          </button>
+
+          <button
+            className="authBtn importActionBtn"
+            type="button"
+            onClick={save}
+            disabled={!items.length}
+          >
+            <span className="btnShine" />
+            Save
+          </button>
+        </div>
+
+        {!!msg && (
+          <p className={`authMsg ${isError ? "authErr" : "authOk"}`}>{msg}</p>
+        )}
+
+        {!!items.length && (
+          <div className="scheduleTableWrap" style={{ marginTop: 14 }}>
+            <table className="scheduleTable">
+              <thead>
+                <tr>
+                  <th>Section</th>
+                  <th>Name</th>
+                  <th>Day</th>
+                  <th>Time</th>
+                  <th>Room</th>
+                  <th>Instructor</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((x, i) => (
+                  <tr key={i}>
+                    <td>{x.sectionCode}</td>
+                    <td>{x.courseName}</td>
+                    <td>{x.day}</td>
+                    <td>
+                      {x.startTime} - {x.endTime}
+                    </td>
+                    <td>{x.roomCode}</td>
+                    <td>{x.instructor}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

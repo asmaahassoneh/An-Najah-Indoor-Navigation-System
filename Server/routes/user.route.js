@@ -32,6 +32,12 @@ router.put(
   UserController.changePassword,
 );
 
+router.put(
+  "/id/:id/room",
+  requireSelfOrRole("admin"),
+  UserController.updateProfessorRoom,
+);
+
 router.put("/id/:id", requireSelfOrRole("admin"), UserController.updateById);
 
 router.put("/email/:email", requireRole("admin"), UserController.updateByEmail);

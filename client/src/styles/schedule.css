@@ -1,0 +1,208 @@
+.scheduleCard {
+  width: min(1100px, 94vw);
+}
+
+.scheduleTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.scheduleTitle {
+  margin: 10px 0 0;
+  font-size: 40px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+}
+
+.scheduleBtn {
+  width: auto;
+  padding: 0 18px;
+  white-space: nowrap;
+}
+
+.scheduleEmpty {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  margin-top: 10px;
+}
+
+.scheduleTableWrap {
+  margin-top: 14px;
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.scheduleTable {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+}
+
+.scheduleTable th {
+  text-align: left;
+  padding: 14px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  color: rgba(255, 255, 255, 0.75);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.scheduleTable td {
+  padding: 16px 14px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.scheduleTable tbody tr {
+  transition: background 180ms ease;
+}
+
+.scheduleTable tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.scheduleActionCell {
+  text-align: right;
+}
+
+.scheduleNavBtn {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    filter 160ms ease,
+    background 160ms ease;
+}
+
+.scheduleNavBtn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  background: rgba(143, 92, 255, 0.14);
+}
+
+@media (max-width: 720px) {
+  .scheduleTop {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .scheduleBtn {
+    width: 100%;
+  }
+  .scheduleTitle {
+    font-size: 34px;
+  }
+}
+
+.importCard {
+  width: min(1100px, 94vw);
+}
+
+.importTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.importTitle {
+  margin: 10px 0 0;
+  font-size: 40px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+}
+
+.importBackBtn {
+  width: auto;
+  padding: 0 16px;
+  height: 46px;
+  border-radius: 14px;
+}
+
+.importTextarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 220px;
+
+  border-radius: 16px;
+  padding: 14px 16px;
+
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  outline: none;
+
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.5;
+
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.importTextarea::placeholder {
+  color: rgba(203, 213, 245, 0.85);
+  font-weight: 700;
+}
+
+.importTextarea:focus {
+  border-color: rgba(143, 92, 255, 0.55);
+  box-shadow: 0 0 0 4px rgba(143, 92, 255, 0.18);
+  transform: translateY(-1px);
+}
+
+.importActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.importActionBtn {
+  width: auto;
+  padding: 0 18px;
+}
+
+.authBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+@media (max-width: 720px) {
+  .importTop {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .importTitle {
+    font-size: 34px;
+  }
+
+  .importActions {
+    flex-direction: column;
+  }
+
+  .importActionBtn,
+  .importBackBtn {
+    width: 100%;
+  }
+}

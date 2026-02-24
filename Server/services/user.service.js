@@ -5,7 +5,7 @@ const Room = require("../models/room.model");
 const { Op } = require("sequelize");
 
 class UserService {
-  static async register({ username, email, password, roomId }) {
+  static async register({ username, email, password, roomCode }) {
     const existingUser = await User.findOne({
       where: { email: email.toLowerCase() },
     });
@@ -21,15 +21,17 @@ class UserService {
 
     const userData = { username, email: normalizedEmail, password, role };
     if (role === "professor") {
-      if (roomId && String(roomId).trim()) {
-        const code = String(roomId).trim().toUpperCase();
+      if (roomCode && String(roomCode).trim()) {
+        const code = String(roomCode).trim().toUpperCase();
 
         const room = await Room.findOne({ where: { code } });
         if (!room) throw new Error("Room does not exist");
 
         userData.roomId = room.id;
+        userData.hasRoom = true;
       } else {
         userData.roomId = null;
+        userData.hasRoom = false;
       }
     }
     if (role === "professor" && userData.roomId) userData.hasRoom = true;
@@ -181,17 +183,67 @@ class UserService {
   static async getAllUsers(currentUserId) {
     try {
       const users = await User.findAll({
-        where: {
-          id: { [Op.ne]: currentUserId },
-        },
+        where: { id: { [Op.ne]: currentUserId } },
         attributes: { exclude: ["password"] },
+        include: [
+          {
+            model: Room,
+            attributes: ["id", "code"],
+            required: false,
+          },
+        ],
         order: [["id", "ASC"]],
       });
 
-      return users;
+      return users.map((u) => {
+        const json = u.toJSON();
+        return {
+          ...json,
+          roomCode: json.Room?.code || null,
+        };
+      });
     } catch (error) {
       throw new Error(error.message);
     }
+  }
+
+  static async updateProfessorRoom({ targetUserId, roomCode, currentUser }) {
+    const targetId = Number(targetUserId);
+    if (!Number.isFinite(targetId)) throw new Error("Invalid user id");
+
+    const targetUser = await User.findByPk(targetId);
+    if (!targetUser) throw new Error("User not found");
+
+    if (targetUser.role !== "professor") {
+      throw new Error("Only professors can have a room");
+    }
+
+    const isAdmin = currentUser?.role === "admin";
+    const isSelf = Number(currentUser?.id) === targetId;
+
+    if (!isAdmin && !isSelf) {
+      throw new Error("Forbidden");
+    }
+
+    const normalized = String(roomCode || "")
+      .trim()
+      .toUpperCase();
+
+    if (!normalized) {
+      targetUser.roomId = null;
+      targetUser.hasRoom = false;
+      await targetUser.save();
+      return targetUser;
+    }
+
+    const room = await Room.findOne({ where: { code: normalized } });
+    if (!room) throw new Error("Room does not exist");
+
+    targetUser.roomId = room.id;
+    targetUser.hasRoom = true;
+    await targetUser.save();
+
+    return targetUser;
   }
 }
 

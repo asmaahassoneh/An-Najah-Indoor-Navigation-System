@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { Text, View, StyleSheet, Pressable } from "react-native";
 import { useRouter } from "expo-router";
+import GlowBackground from "../src/components/GlowBackground";
 
 import useApi from "../src/services/useApi";
 import Screen from "../src/components/Screen";
@@ -59,6 +60,7 @@ function Inner() {
 
   return (
     <Screen padded={false}>
+      <GlowBackground />
       <AppNavbar />
 
       <View style={styles.wrap}>

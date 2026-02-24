@@ -3,12 +3,14 @@ import { useContext } from "react";
 import { AuthContext } from "../src/context/auth.context";
 import Screen from "../src/components/Screen";
 import AppNavbar from "../src/components/AppNavbar";
+import GlowBackground from "../src/components/GlowBackground";
 
 export default function Home() {
   const { user } = useContext(AuthContext);
 
   return (
     <Screen padded={false}>
+      <GlowBackground />
       <AppNavbar />
 
       <View style={styles.center}>

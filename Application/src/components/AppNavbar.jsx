@@ -9,7 +9,7 @@ export default function AppNavbar() {
 
   return (
     <View style={styles.nav}>
-      <Text style={styles.logo}>User System</Text>
+      <Text style={styles.logo}>Navigation System</Text>
 
       <View style={styles.links}>
         <NavBtn label="Home" onPress={() => router.push("/")} />

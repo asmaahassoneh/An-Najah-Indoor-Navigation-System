@@ -10,7 +10,7 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="nav-container">
-        <div className="logo">User System</div>
+        <div className="logo">Navigation System</div>
 
         <div className="links">
           <NavLink to="/">Home</NavLink>

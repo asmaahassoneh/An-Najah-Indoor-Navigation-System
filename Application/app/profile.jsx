@@ -7,6 +7,7 @@ import AppNavbar from "../src/components/AppNavbar";
 import { AuthContext } from "../src/context/auth.context";
 import ProtectedRoute from "../src/routes/ProtectedRoute";
 import useApi from "../src/services/useApi";
+import GlowBackground from "../src/components/GlowBackground";
 
 export default function Profile() {
   return (
@@ -36,6 +37,7 @@ function ProfileInner() {
 
   return (
     <Screen padded={false}>
+      <GlowBackground />
       <AppNavbar />
 
       <View style={styles.wrap}>

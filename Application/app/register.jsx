@@ -6,6 +6,7 @@ import useApi from "../src/services/useApi";
 import Screen from "../src/components/Screen";
 import AppNavbar from "../src/components/AppNavbar";
 import PasswordInput from "../src/components/PasswordInput";
+import GlowBackground from "../src/components/GlowBackground";
 
 export default function Register() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function Register() {
     username: "",
     email: "",
     password: "",
-    roomId: "",
+    roomCode: "",
   });
 
   const [error, setError] = useState("");
@@ -37,6 +38,7 @@ export default function Register() {
 
   return (
     <Screen padded={false}>
+      <GlowBackground />
       <AppNavbar />
 
       <View style={styles.wrap}>
@@ -68,8 +70,8 @@ export default function Register() {
 
           {form.email.endsWith("@najah.edu") && (
             <TextInput
-              value={form.roomId}
-              onChangeText={(v) => change("roomId", v)}
+              value={form.roomCode}
+              onChangeText={(v) => change("roomCode", v)}
               placeholder="Room (Professors only)"
               placeholderTextColor="#cbd5f5"
               style={styles.input}

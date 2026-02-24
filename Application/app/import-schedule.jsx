@@ -13,6 +13,7 @@ import AppNavbar from "../src/components/AppNavbar";
 import ProtectedRoute from "../src/routes/ProtectedRoute";
 import useApi from "../src/services/useApi";
 import { parseZajelText } from "../src/utils/parseZajelSchedule";
+import GlowBackground from "../src/components/GlowBackground";
 
 export default function ImportSchedule() {
   return (
@@ -49,6 +50,7 @@ function Inner() {
 
   return (
     <Screen padded={false}>
+      <GlowBackground />
       <AppNavbar />
 
       <View style={styles.wrap}>
