@@ -182,7 +182,7 @@ class UserService {
     try {
       const users = await User.findAll({
         where: {
-          id: { [Op.ne]: currentUserId }, 
+          id: { [Op.ne]: currentUserId },
         },
         attributes: { exclude: ["password"] },
         order: [["id", "ASC"]],

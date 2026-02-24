@@ -12,7 +12,6 @@ function requireAuth(req, res, next) {
     }
 
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    // payload is what you sign: { id, role }
     req.user = payload;
 
     return next();
@@ -33,7 +32,6 @@ function requireRole(...allowedRoles) {
 }
 
 function requireSelfOrRole(...allowedRoles) {
-  // user can access their own resource OR has allowed role (ex: admin)
   return (req, res, next) => {
     if (!req.user) return res.status(401).json({ error: "Unauthorized" });
 

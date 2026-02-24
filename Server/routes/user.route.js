@@ -1,11 +1,16 @@
 const express = require("express");
+const PasswordResetController = require("../controllers/passwordReset.controller");
 const router = express.Router();
+
 const UserController = require("../controllers/user.controller");
 const {
   requireAuth,
   requireRole,
   requireSelfOrRole,
 } = require("../middleware/auth");
+
+router.post("/forgot-password", PasswordResetController.request);
+router.post("/reset-password-with-code", PasswordResetController.reset);
 
 router.post("/register", UserController.register);
 router.post("/login", UserController.login);

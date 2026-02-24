@@ -99,6 +99,16 @@ export default function Login() {
           {loading ? "Logging in..." : "Login"}
         </button>
 
+        <div className="auth-links">
+          <button
+            type="button"
+            className="link-btn"
+            onClick={() => navigate("/forgot-password")}
+          >
+            Forgot password?
+          </button>
+        </div>
+
         {error && (
           <p style={{ margin: 0, color: "#ff6b6b", textAlign: "center" }}>
             {error}

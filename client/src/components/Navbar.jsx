@@ -20,7 +20,7 @@ export default function Navbar() {
           )}
           {!user && <NavLink to="/register">Register</NavLink>}
           {!user && <NavLink to="/login">Login</NavLink>}
-          {user?.role === "admin" && <NavLink to="/admin">Admin</NavLink>}
+          {user?.role === "admin" && <NavLink to="/admin">Dashboard</NavLink>}
           {user && <span className="user-pill">{user.username}</span>}
 
           {user && (

@@ -9,11 +9,11 @@ const ScheduleItem = sequelize.define("ScheduleItem", {
   courseName: DataTypes.STRING,
   credits: DataTypes.INTEGER,
 
-  day: DataTypes.STRING, 
+  day: DataTypes.STRING,
   startTime: DataTypes.STRING,
   endTime: DataTypes.STRING,
 
-  roomCode: DataTypes.STRING, 
+  roomCode: DataTypes.STRING,
   campus: DataTypes.STRING,
   instructor: DataTypes.STRING,
 

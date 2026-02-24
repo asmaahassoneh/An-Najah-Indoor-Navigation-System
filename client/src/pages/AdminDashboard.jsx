@@ -15,6 +15,21 @@ export default function AdminDashboard() {
   const [roomForm, setRoomForm] = useState({ code: "", type: "lecture" });
   const [roomMsg, setRoomMsg] = useState("");
 
+  const [confirmBox, setConfirmBox] = useState({
+    open: false,
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
+
+  const openConfirm = ({ title, message, onConfirm }) => {
+    setConfirmBox({ open: true, title, message, onConfirm });
+  };
+
+  const closeConfirm = () => {
+    setConfirmBox({ open: false, title: "", message: "", onConfirm: null });
+  };
+
   const headerStyle = useMemo(
     () => ({
       maxWidth: 1100,
@@ -63,24 +78,38 @@ export default function AdminDashboard() {
     fetchRooms();
   }, []);
 
-  const deleteUser = async (id) => {
-    if (!confirm("Delete this user?")) return;
-    try {
-      await API.delete(`/users/id/${id}`);
-      setUsers((prev) => prev.filter((u) => u.id !== id));
-    } catch (err) {
-      alert(err.response?.data?.error || "Failed to delete user");
-    }
+  const deleteUser = (id) => {
+    openConfirm({
+      title: "Delete user",
+      message: "Are you sure you want to delete this user?",
+      onConfirm: async () => {
+        try {
+          await API.delete(`/users/id/${id}`);
+          setUsers((prev) => prev.filter((u) => u.id !== id));
+        } catch (err) {
+          alert(err.response?.data?.error || "Failed to delete user");
+        } finally {
+          closeConfirm();
+        }
+      },
+    });
   };
 
-  const deleteRoom = async (id) => {
-    if (!confirm("Delete this room?")) return;
-    try {
-      await API.delete(`/rooms/id/${id}`);
-      setRooms((prev) => prev.filter((r) => r.id !== id));
-    } catch (err) {
-      alert(err.response?.data?.error || "Failed to delete room");
-    }
+  const deleteRoom = (id) => {
+    openConfirm({
+      title: "Delete room",
+      message: "Are you sure you want to delete this room?",
+      onConfirm: async () => {
+        try {
+          await API.delete(`/rooms/id/${id}`);
+          setRooms((prev) => prev.filter((r) => r.id !== id));
+        } catch (err) {
+          alert(err.response?.data?.error || "Failed to delete room");
+        } finally {
+          closeConfirm();
+        }
+      },
+    });
   };
 
   const createRoom = async (e) => {
@@ -88,13 +117,13 @@ export default function AdminDashboard() {
     setRoomMsg("");
     try {
       const res = await API.post("/rooms", roomForm);
-      setRoomMsg("Room created ✅");
+      setRoomMsg("Room Added ✅");
       const newRoom = res.data.room || res.data;
       await fetchRooms();
       setRoomForm({ code: "", type: "lecture" });
       return newRoom;
     } catch (err) {
-      setRoomMsg(err.response?.data?.error || "Failed to create room");
+      setRoomMsg(err.response?.data?.error || "Failed to Add room");
     }
   };
 
@@ -252,7 +281,7 @@ export default function AdminDashboard() {
         {tab === "rooms" && (
           <div style={{ display: "grid", gap: 16 }}>
             <div style={cardStyle}>
-              <h3 style={{ margin: 0, marginBottom: 10 }}>Create Room</h3>
+              <h3 style={{ margin: 0, marginBottom: 10 }}>Add Room</h3>
 
               <form
                 onSubmit={createRoom}
@@ -319,7 +348,7 @@ export default function AdminDashboard() {
                     cursor: "pointer",
                   }}
                 >
-                  Create
+                  Add
                 </button>
               </form>
 
@@ -431,6 +460,72 @@ export default function AdminDashboard() {
                   </table>
                 </div>
               )}
+            </div>
+          </div>
+        )}
+        {confirmBox.open && (
+          <div
+            onClick={closeConfirm}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.55)",
+              display: "grid",
+              placeItems: "center",
+              zIndex: 9999,
+              padding: 16,
+            }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                width: "100%",
+                maxWidth: 420,
+                background: "rgba(20,20,30,0.95)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                borderRadius: 16,
+                padding: 16,
+                backdropFilter: "blur(10px)",
+              }}
+            >
+              <h3 style={{ margin: 0 }}>{confirmBox.title}</h3>
+              <p style={{ margin: "10px 0 16px", opacity: 0.85 }}>
+                {confirmBox.message}
+              </p>
+
+              <div
+                style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}
+              >
+                <button
+                  onClick={closeConfirm}
+                  style={{
+                    padding: "10px 12px",
+                    borderRadius: 12,
+                    border: "1px solid rgba(255,255,255,0.14)",
+                    background: "rgba(255,255,255,0.06)",
+                    color: "white",
+                    cursor: "pointer",
+                    fontWeight: 700,
+                  }}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={confirmBox.onConfirm}
+                  style={{
+                    padding: "10px 12px",
+                    borderRadius: 12,
+                    border: "none",
+                    background: "rgba(255, 107, 107, 0.9)",
+                    color: "white",
+                    cursor: "pointer",
+                    fontWeight: 800,
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         )}

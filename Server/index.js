@@ -7,9 +7,10 @@ const port = 3000;
 const startServer = async () => {
   try {
     await connectDB();
-    await sequelize.sync({ force: true });
+    //await sequelize.sync({ force: true });
+    await sequelize.sync();
 
-    app.listen(port, () => {
+    app.listen(port, "0.0.0.0", () => {
       console.log(`🚀 Server running at http://localhost:${port}`);
     });
   } catch (error) {

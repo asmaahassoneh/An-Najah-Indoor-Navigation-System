@@ -419,3 +419,54 @@ button:hover {
   color: #8f5cff;
   background: rgba(143, 92, 255, 0.12);
 }
+
+
+
+.auth-page {
+  max-width: 520px;
+  margin: 120px auto 0;
+  padding: 0 16px;
+}
+
+.auth-card {
+  display: grid;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 22px;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.auth-links {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.link-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  width: auto;
+  margin-top: 0;         
+  grid-column: unset;    
+  color: #cbd5f5;
+  cursor: pointer;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.link-btn:hover {
+  transform: none; 
+  color: white;
+}
+
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.secondary-btn:hover {
+  transform: none;
+}

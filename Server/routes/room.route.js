@@ -3,12 +3,10 @@ const router = express.Router();
 const RoomController = require("../controllers/room.controller");
 const { requireAuth, requireRole } = require("../middleware/auth");
 
-
 router.get("/", RoomController.getAll);
 router.get("/search", RoomController.search);
 router.get("/id/:id", RoomController.getById);
 router.get("/code/:code", RoomController.getByCode);
-
 
 router.post("/", requireAuth, requireRole("admin"), RoomController.create);
 router.put(

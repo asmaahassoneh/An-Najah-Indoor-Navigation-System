@@ -12,6 +12,9 @@ import AdminRoute from "./routes/AdminRoute";
 import ImportSchedule from "./pages/ImportSchedule";
 import MySchedule from "./pages/MySchedule";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import NotFound from "./pages/NotFound";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetWithCode from "./pages/ResetWithCode";
 
 export default function App() {
   return (
@@ -41,6 +44,9 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-with-code" element={<ResetWithCode />} />
+
         <Route
           path="/admin"
           element={
@@ -49,6 +55,7 @@ export default function App() {
             </AdminRoute>
           }
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );
