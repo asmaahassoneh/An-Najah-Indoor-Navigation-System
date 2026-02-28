@@ -1,19 +1,58 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import API from "../services/api";
 import { useNavigate } from "react-router-dom";
+
+const DAY_ORDER = ["سبت", "احد", "اثنين", "ثلاث", "اربعاء", "خميس", "جمعة"];
+
+function getTodayArabicDay() {
+  const d = new Date().getDay();
+  const map = {
+    0: "احد",
+    1: "اثنين",
+    2: "ثلاث",
+    3: "اربعاء",
+    4: "خميس",
+    5: "جمعة",
+    6: "سبت",
+  };
+  return map[d] || "احد";
+}
+
+function normalizeDay(day) {
+  const x = String(day || "").trim();
+  if (x === "أحد") return "احد";
+  if (x === "إثنين") return "اثنين";
+  if (x === "أربعاء") return "اربعاء";
+  if (x === "الجمعة") return "جمعة";
+  if (x === "ثلاثاء") return "ثلاث";
+  return x;
+}
+
+function isOnlineRoom(roomCode) {
+  const c = String(roomCode || "").trim();
+  return c === "509999" || c.toUpperCase() === "ONLINE";
+}
 
 export default function MySchedule() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
+
   const navigate = useNavigate();
+
+  const [selectedDay, setSelectedDay] = useState(getTodayArabicDay);
 
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
+        setErr("");
         const res = await API.get("/schedule/me");
-        setItems(res.data || []);
+        const list = (res.data || []).map((x) => ({
+          ...x,
+          day: normalizeDay(x.day),
+        }));
+        setItems(list);
       } catch (e) {
         setErr(e.response?.data?.error || "Failed to load schedule");
       } finally {
@@ -21,6 +60,30 @@ export default function MySchedule() {
       }
     })();
   }, []);
+
+  const availableDays = useMemo(() => {
+    const set = new Set(items.map((x) => normalizeDay(x.day)).filter(Boolean));
+    return DAY_ORDER.filter((d) => set.has(d));
+  }, [items]);
+
+  useEffect(() => {
+    if (!loading && !err && items.length) {
+      const hasSelected = items.some(
+        (x) => normalizeDay(x.day) === selectedDay,
+      );
+      if (!hasSelected && availableDays.length) {
+        setSelectedDay(availableDays[0]);
+      }
+    }
+  }, [loading, err, items, selectedDay, availableDays]);
+
+  const filtered = useMemo(() => {
+    return items
+      .filter((x) => normalizeDay(x.day) === selectedDay)
+      .sort((a, b) =>
+        String(a.startTime || "").localeCompare(String(b.startTime || "")),
+      );
+  }, [items, selectedDay]);
 
   return (
     <div className="authPage">
@@ -32,7 +95,9 @@ export default function MySchedule() {
           <div>
             <div className="authBadge">Schedule</div>
             <h2 className="scheduleTitle">My Schedule</h2>
-            <p className="authSub">Your imported timetable from Zajel.</p>
+            <p className="authSub">
+              Today: <b>{selectedDay}</b>
+            </p>
           </div>
 
           <button
@@ -43,6 +108,21 @@ export default function MySchedule() {
             Import / Update
           </button>
         </div>
+
+        {!!availableDays.length && (
+          <div className="dayTabs">
+            {availableDays.map((d) => (
+              <button
+                key={d}
+                type="button"
+                className={`dayTab ${d === selectedDay ? "active" : ""}`}
+                onClick={() => setSelectedDay(d)}
+              >
+                {d}
+              </button>
+            ))}
+          </div>
+        )}
 
         {loading && <p className="authMsg">Loading...</p>}
         {!!err && <p className="authMsg authErr">{err}</p>}
@@ -61,12 +141,15 @@ export default function MySchedule() {
           </div>
         )}
 
-        {!!items.length && (
+        {!loading && !err && items.length > 0 && filtered.length === 0 && (
+          <p className="authMsg">No lectures on {selectedDay}.</p>
+        )}
+
+        {!!filtered.length && (
           <div className="scheduleTableWrap">
             <table className="scheduleTable">
               <thead>
                 <tr>
-                  <th>Day</th>
                   <th>Time</th>
                   <th>Course</th>
                   <th>Room</th>
@@ -76,25 +159,37 @@ export default function MySchedule() {
               </thead>
 
               <tbody>
-                {items.map((x) => (
-                  <tr key={x.id}>
-                    <td>{x.day}</td>
-                    <td>
-                      {x.startTime} - {x.endTime}
-                    </td>
-                    <td>{x.courseName}</td>
-                    <td>{x.roomCode}</td>
-                    <td>{x.instructor}</td>
-                    <td className="scheduleActionCell">
-                      <button
-                        className="scheduleNavBtn"
-                        onClick={() => alert(`Navigate to ${x.roomCode}`)}
-                      >
-                        Navigate
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {filtered.map((x) => {
+                  const online = isOnlineRoom(x.roomCode);
+                  return (
+                    <tr key={x.id}>
+                      <td>
+                        {x.startTime} - {x.endTime}
+                      </td>
+                      <td>{x.courseName}</td>
+                      <td>
+                        {online ? (
+                          <span className="onlineBadge">Online</span>
+                        ) : (
+                          x.roomCode
+                        )}
+                      </td>
+                      <td>{x.instructor}</td>
+                      <td className="scheduleActionCell">
+                        {online ? (
+                          <span className="muted">No navigation</span>
+                        ) : (
+                          <button
+                            className="scheduleNavBtn"
+                            onClick={() => navigate(`/navigate/${x.roomCode}`)}
+                          >
+                            Navigate
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

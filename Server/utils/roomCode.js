@@ -12,6 +12,7 @@ function extractFaculty(code) {
   const faculties = {
     11: "Engineering",
     14: "Science",
+    17: "Medicine",
     // add more later
   };
 

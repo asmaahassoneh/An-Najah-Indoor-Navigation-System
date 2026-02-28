@@ -657,3 +657,52 @@ button:hover {
     min-width: 80px;
   }
 }
+.dayTabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 12px 0 10px;
+}
+
+.dayTab {
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(10px);
+}
+
+.dayTab:hover {
+  transform: translateY(-2px);
+  border-color: rgba(143, 92, 255, 0.35);
+}
+
+.dayTab.active {
+  background: linear-gradient(
+    135deg,
+    rgba(143, 92, 255, 0.75),
+    rgba(109, 60, 255, 0.75)
+  );
+  border-color: rgba(143, 92, 255, 0.45);
+  box-shadow: 0 0 22px rgba(143, 92, 255, 0.22);
+}
+
+.onlineBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(80, 200, 255, 0.14);
+  border: 1px solid rgba(80, 200, 255, 0.25);
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.muted {
+  opacity: 0.75;
+  font-weight: 600;
+}

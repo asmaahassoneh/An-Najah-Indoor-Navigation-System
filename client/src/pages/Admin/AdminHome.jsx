@@ -35,6 +35,28 @@ export default function AdminHome() {
             </div>
             <span className="cardArrow">→</span>
           </button>
+          <button
+            className="adminCard"
+            onClick={() => navigate("/admin/floors")}
+          >
+            <div className="cardIcon">🗺️</div>
+            <div className="cardText">
+              <h3>Manage Floors</h3>
+              <p>Add floor maps, faculty, image size</p>
+            </div>
+            <span className="cardArrow">→</span>
+          </button>
+          <button
+            className="adminCard"
+            onClick={() => navigate("/admin/graph")}
+          >
+            <div className="cardIcon">🧭</div>
+            <div className="cardText">
+              <h3>Build Navigation Graph</h3>
+              <p>Add nodes and connect paths on floor maps</p>
+            </div>
+            <span className="cardArrow">→</span>
+          </button>
         </div>
       </div>
     </div>

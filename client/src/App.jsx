@@ -21,6 +21,9 @@ import ResetWithCode from "./pages/ResetWithCode";
 import AdminRooms from "./pages/Admin/AdminRooms";
 import AdminUsers from "./pages/Admin/AdminUsers";
 import AdminHome from "./pages/Admin/AdminHome";
+import AdminFloors from "./pages/Admin/AdminFloors";
+import MapNavigate from "./pages/MapNavigate";
+import AdminGraphBuilder from "./pages/Admin/AdminGraphBuilder";
 
 export default function App() {
   return (
@@ -77,6 +80,30 @@ export default function App() {
             <AdminRoute>
               <AdminRooms />
             </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/floors"
+          element={
+            <AdminRoute>
+              <AdminFloors />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/graph"
+          element={
+            <AdminRoute>
+              <AdminGraphBuilder />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/navigate/:roomCode"
+          element={
+            <ProtectedRoute>
+              <MapNavigate />
+            </ProtectedRoute>
           }
         />
         <Route path="*" element={<NotFound />} />

@@ -434,3 +434,80 @@
   transform: translateX(6px);
   color: rgba(255, 255, 255, 0.95);
 }
+.users-table select,
+.admin-select {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  outline: none;
+  cursor: pointer;
+
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease;
+}
+
+.users-table select:focus,
+.admin-select:focus {
+  border-color: rgba(143, 92, 255, 0.7);
+  box-shadow: 0 0 18px rgba(143, 92, 255, 0.35);
+  background: rgba(143, 92, 255, 0.08);
+}
+
+.users-table select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(255, 255, 255, 0.7) 50%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.7) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 3px),
+    calc(100% - 12px) calc(50% - 3px);
+  background-size:
+    6px 6px,
+    6px 6px;
+  background-repeat: no-repeat;
+}
+
+.users-table select:hover,
+.admin-select:hover {
+  border-color: rgba(143, 92, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.users-table select option,
+.admin-select option {
+  background: #0f172a;
+  color: white;
+}
+
+.admin-form {
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  margin-bottom: 28px;
+}
+
+.admin-form input {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.admin-form input:focus {
+  border-color: rgba(143, 92, 255, 0.7);
+  box-shadow: 0 0 18px rgba(143, 92, 255, 0.35);
+}
