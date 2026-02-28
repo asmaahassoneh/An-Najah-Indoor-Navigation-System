@@ -14,7 +14,7 @@ import API from "../../services/api";
 export default function AdminGraphBuilder() {
   const [roomCode, setRoomCode] = useState("");
   const [rooms, setRooms] = useState([]);
-  const [mode, setMode] = useState("node"); 
+  const [mode, setMode] = useState("node");
   const [floors, setFloors] = useState([]);
   const [floorId, setFloorId] = useState("");
   const floor = useMemo(
@@ -31,6 +31,153 @@ export default function AdminGraphBuilder() {
 
   const [img] = useImage(floor?.imageUrl || "");
 
+  const clearAllNodes = async () => {
+    if (!floorId) {
+      setMsg("Select a floor first");
+      return;
+    }
+
+    if (!window.confirm("Delete ALL nodes and edges for this floor?")) return;
+
+    try {
+      await API.delete(`/maps/floors/${floorId}/graph`);
+      setMsg("All nodes cleared ✅");
+      await reloadGraph();
+    } catch (e) {
+      setMsg(e.response?.data?.error || "Failed to clear floor");
+    }
+  };
+  const connectAllNodesMST = async () => {
+    if (!floorId) return setMsg("Select a floor first");
+    if (nodes.length < 2) return setMsg("Need at least 2 nodes");
+
+    const existing = new Set(
+      edges.map((e) => {
+        const a = Number(e.fromNodeId);
+        const b = Number(e.toNodeId);
+        return `${Math.min(a, b)}-${Math.max(a, b)}`;
+      }),
+    );
+
+    const dist2 = (a, b) => {
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      return dx * dx + dy * dy;
+    };
+
+    const visited = new Set();
+    const start = nodes[0];
+    visited.add(start.id);
+
+    try {
+      setMsg("Connecting all nodes (MST)...");
+
+      while (visited.size < nodes.length) {
+        let bestEdge = null;
+        let bestD = Infinity;
+
+        for (const a of nodes) {
+          if (!visited.has(a.id)) continue;
+
+          for (const b of nodes) {
+            if (visited.has(b.id)) continue;
+
+            const d = dist2(a, b);
+            if (d < bestD) {
+              bestD = d;
+              bestEdge = { from: a, to: b };
+            }
+          }
+        }
+
+        if (!bestEdge) break;
+
+        const fromId = Number(bestEdge.from.id);
+        const toId = Number(bestEdge.to.id);
+        const key = `${Math.min(fromId, toId)}-${Math.max(fromId, toId)}`;
+
+        if (!existing.has(key)) {
+          await API.post("/maps/edges", {
+            floorId: Number(floorId),
+            fromNodeId: fromId,
+            toNodeId: toId,
+          });
+          existing.add(key);
+        }
+
+        visited.add(bestEdge.to.id);
+      }
+
+      setMsg("All nodes connected ✅");
+      await reloadGraph();
+    } catch (e) {
+      setMsg(e.response?.data?.error || "Failed to connect nodes");
+    }
+  };
+  const connectAllNodesNearest = async () => {
+    if (!floorId) {
+      setMsg("Select a floor first");
+      return;
+    }
+
+    if (nodes.length < 2) {
+      setMsg("Need at least 2 nodes");
+      return;
+    }
+
+    const existing = new Set(
+      edges.map((e) => {
+        const a = Number(e.fromNodeId);
+        const b = Number(e.toNodeId);
+        return `${Math.min(a, b)}-${Math.max(a, b)}`;
+      }),
+    );
+
+    const dist2 = (a, b) => {
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      return dx * dx + dy * dy;
+    };
+
+    try {
+      setMsg("Connecting nodes...");
+
+      for (const n of nodes) {
+        let best = null;
+        let bestD = Infinity;
+
+        for (const m of nodes) {
+          if (m.id === n.id) continue;
+          const d = dist2(n, m);
+          if (d < bestD) {
+            bestD = d;
+            best = m;
+          }
+        }
+
+        if (!best) continue;
+
+        const a = Number(n.id);
+        const b = Number(best.id);
+        const key = `${Math.min(a, b)}-${Math.max(a, b)}`;
+
+        if (existing.has(key)) continue;
+
+        await API.post("/maps/edges", {
+          floorId: Number(floorId),
+          fromNodeId: a,
+          toNodeId: b,
+        });
+
+        existing.add(key);
+      }
+
+      setMsg("Auto-connect done ✅");
+      await reloadGraph();
+    } catch (e) {
+      setMsg(e.response?.data?.error || "Failed to auto-connect nodes");
+    }
+  };
   useEffect(() => {
     (async () => {
       try {
@@ -77,28 +224,33 @@ export default function AdminGraphBuilder() {
   };
 
   const addNode = async (pos) => {
-    if (!floorId) return;
+    if (!floorId) {
+      setMsg("Select a floor first");
+      return;
+    }
     try {
-      await API.post("/maps/nodes", {
+      const res = await API.post("/maps/nodes", {
         floorId: Number(floorId),
         x: pos.x,
         y: pos.y,
       });
+      console.log("created node:", res.data);
       setMsg("Node added ✅");
       await reloadGraph();
     } catch (e) {
       setMsg(e.response?.data?.error || "Failed to add node");
     }
   };
-
   const connectNodes = async (fromNodeId, toNodeId) => {
-    if (!floorId) return;
+    if (!floorId) return setMsg("Select a floor first");
+
     try {
       await API.post("/maps/edges", {
         floorId: Number(floorId),
-        fromNodeId,
-        toNodeId,
+        fromNodeId: Number(fromNodeId),
+        toNodeId: Number(toNodeId),
       });
+
       setMsg("Edge created ✅");
       setSelectedNodeId(null);
       await reloadGraph();
@@ -114,7 +266,7 @@ export default function AdminGraphBuilder() {
         const a = map.get(e.fromNodeId);
         const b = map.get(e.toNodeId);
         if (!a || !b) return null;
-        return [a.x, a.y, b.x, b.y];
+        return { id: e.id, points: [a.x, a.y, b.x, b.y] };
       })
       .filter(Boolean);
   }, [nodes, edges]);
@@ -162,6 +314,20 @@ export default function AdminGraphBuilder() {
             >
               Place Room Location
             </button>
+            <button
+              className="authBtn authBtnSecondary"
+              type="button"
+              onClick={connectAllNodesMST}
+            >
+              Connect All (MST)
+            </button>
+            <button
+              className="authBtn authBtnSecondary"
+              type="button"
+              onClick={connectAllNodesNearest}
+            >
+              Auto Connect Nodes
+            </button>
 
             <button
               className="authBtn authBtnSecondary"
@@ -169,6 +335,20 @@ export default function AdminGraphBuilder() {
               onClick={() => setMode("node")}
             >
               Add Nodes
+            </button>
+            <button
+              className="authBtn authBtnSecondary"
+              type="button"
+              onClick={() => setMode("delete")}
+            >
+              Delete
+            </button>
+            <button
+              className="authBtn authBtnSecondary"
+              type="button"
+              onClick={clearAllNodes}
+            >
+              Clear All Nodes
             </button>
           </div>
 
@@ -247,6 +427,13 @@ export default function AdminGraphBuilder() {
 
               if (!isBackgroundClick) return;
 
+              const isAllowedClick =
+                e.target === stage ||
+                e.target.className === "Image" ||
+                e.target.className === "Line";
+
+              if (!isAllowedClick) return;
+
               if (mode === "room") {
                 const code = roomCode.trim();
                 if (!code) {
@@ -283,14 +470,31 @@ export default function AdminGraphBuilder() {
                 height={stageH}
               />
 
-              {edgeLines.map((pts, idx) => (
+              {edgeLines.map((edge) => (
                 <Line
-                  key={idx}
-                  points={pts}
+                  key={edge.id}
+                  points={edge.points}
+                  stroke="red"
                   strokeWidth={4}
                   lineCap="round"
                   lineJoin="round"
                   opacity={0.9}
+                  onMouseDown={async (evt) => {
+                    if (mode === "delete") {
+                      evt.cancelBubble = true;
+
+                      if (!window.confirm(`Delete edge ${edge.id}?`)) return;
+                      try {
+                        await API.delete(`/maps/edges/${edge.id}`);
+                        setMsg(`Edge ${edge.id} deleted ✅`);
+                        await reloadGraph();
+                      } catch (e) {
+                        setMsg(
+                          e.response?.data?.error || "Failed to delete edge",
+                        );
+                      }
+                    }
+                  }}
                 />
               ))}
               {rooms.map((r) => (
@@ -301,7 +505,7 @@ export default function AdminGraphBuilder() {
                     y={r.y - 8}
                     text={r.roomCode}
                     fontSize={12}
-                    fill="white"
+                    fill="black"
                   />
                 </React.Fragment>
               ))}
@@ -312,8 +516,26 @@ export default function AdminGraphBuilder() {
                     <Circle
                       x={n.x}
                       y={n.y}
-                      radius={isSelected ? 10 : 7}
-                      onClick={() => {
+                      radius={isSelected ? 5 : 3}
+                      fill="red"
+                      onClick={async (evt) => {
+                        evt.cancelBubble = true;
+
+                        if (mode === "delete") {
+                          if (!window.confirm(`Delete node ${n.id}?`)) return;
+                          try {
+                            await API.delete(`/maps/nodes/${n.id}`);
+                            setMsg(`Node ${n.id} deleted ✅`);
+                            await reloadGraph();
+                          } catch (e) {
+                            setMsg(
+                              e.response?.data?.error ||
+                                "Failed to delete node",
+                            );
+                          }
+                          return;
+                        }
+
                         if (!selectedNodeId) {
                           setSelectedNodeId(n.id);
                           setMsg(
@@ -321,7 +543,6 @@ export default function AdminGraphBuilder() {
                           );
                           return;
                         }
-
                         if (selectedNodeId === n.id) {
                           setSelectedNodeId(null);
                           setMsg("Selection cleared");
@@ -329,12 +550,6 @@ export default function AdminGraphBuilder() {
                         }
                         connectNodes(selectedNodeId, n.id);
                       }}
-                    />
-                    <Text
-                      x={n.x + 10}
-                      y={n.y - 10}
-                      text={`${n.id}`}
-                      fontSize={12}
                     />
                   </React.Fragment>
                 );

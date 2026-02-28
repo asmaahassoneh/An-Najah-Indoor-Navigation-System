@@ -20,7 +20,6 @@ function nearestNode(nodes, point) {
 }
 
 class MapsController {
-
   static async getFloors(req, res) {
     try {
       const floors = await Floor.findAll({ order: [["id", "ASC"]] });
@@ -86,7 +85,7 @@ class MapsController {
       }
 
       const nodes = await MapNode.findAll({ where: { floorId: floorIdNum } });
-      const edges = await MapEdge.findAll({ where: { floorId: floorIdNum } }); 
+      const edges = await MapEdge.findAll({ where: { floorId: floorIdNum } });
 
       if (!nodes.length) {
         return res.status(400).json({ error: "No graph nodes on this floor" });
@@ -126,7 +125,6 @@ class MapsController {
       return res.status(500).json({ error: e.message });
     }
   }
-
 
   static async createFloor(req, res) {
     try {
@@ -224,44 +222,29 @@ class MapsController {
   }
 
   static async createEdge(req, res) {
-    try {
-      const { floorId, fromNodeId, toNodeId } = req.body;
+    const floorId = Number(req.body.floorId);
+    const fromNodeId = Number(req.body.fromNodeId);
+    const toNodeId = Number(req.body.toNodeId);
 
-      if (!floorId || !fromNodeId || !toNodeId) {
-        return res
-          .status(400)
-          .json({ error: "floorId, fromNodeId, toNodeId are required" });
-      }
-
-      const floorIdNum = Number(floorId);
-
-      const from = await MapNode.findOne({
-        where: { id: Number(fromNodeId), floorId: floorIdNum },
-      });
-
-      const to = await MapNode.findOne({
-        where: { id: Number(toNodeId), floorId: floorIdNum },
-      });
-
-      if (!from || !to) {
-        return res
-          .status(404)
-          .json({ error: "Node(s) not found on this floor" });
-      }
-
-      const cost = dist(from, to);
-
-      const edge = await MapEdge.create({
-        floorId: floorIdNum,
-        fromNodeId: Number(fromNodeId),
-        toNodeId: Number(toNodeId),
-        cost,
-      });
-
-      return res.status(201).json(edge);
-    } catch (e) {
-      return res.status(500).json({ error: e.message });
+    if (!floorId || !fromNodeId || !toNodeId) {
+      return res
+        .status(400)
+        .json({ error: "floorId, fromNodeId, toNodeId are required" });
     }
+
+    const from = await MapNode.findOne({ where: { id: fromNodeId, floorId } });
+    const to = await MapNode.findOne({ where: { id: toNodeId, floorId } });
+
+    if (!from || !to) {
+      return res.status(404).json({
+        error: "Node(s) not found on this floor",
+        debug: { floorId, fromNodeId, toNodeId },
+      });
+    }
+
+    const cost = dist(from, to);
+    const edge = await MapEdge.create({ floorId, fromNodeId, toNodeId, cost });
+    return res.status(201).json(edge);
   }
 
   static async deleteEdge(req, res) {
@@ -271,6 +254,18 @@ class MapsController {
       return res.json({ message: "Edge deleted" });
     } catch (e) {
       return res.status(500).json({ error: e.message });
+    }
+  }
+  static async clearFloorGraph(req, res) {
+    const { floorId } = req.params;
+
+    try {
+      await MapEdge.destroy({ where: { floorId } });
+      await MapNode.destroy({ where: { floorId } });
+
+      return res.json({ message: "Floor graph cleared" });
+    } catch (err) {
+      return res.status(500).json({ error: "Failed to clear floor graph" });
     }
   }
 }

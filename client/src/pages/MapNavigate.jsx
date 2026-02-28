@@ -184,6 +184,7 @@ export default function MapNavigate() {
               {route.length >= 4 && (
                 <Line
                   points={route}
+                  stroke="red"
                   strokeWidth={6}
                   lineCap="round"
                   lineJoin="round"
