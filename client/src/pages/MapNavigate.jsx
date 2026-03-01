@@ -25,6 +25,8 @@ export default function MapNavigate() {
   const [segments, setSegments] = useState([]);
   const [segIndex, setSegIndex] = useState(0);
   const [roomLoc, setRoomLoc] = useState(null);
+  const [startRoom, setStartRoom] = useState("");
+  const [startMode, setStartMode] = useState("click");
 
   const [img] = useImage(floor?.imageUrl || "");
 
@@ -75,6 +77,27 @@ export default function MapNavigate() {
     })();
   }, [roomCode]);
 
+  const setStartFromRoom = async () => {
+    try {
+      setMsg("");
+      const res = await mapsApi.roomLocation(startRoom.trim());
+      const loc = res.data;
+
+      const f = floors.find((x) => Number(x.id) === Number(loc.floorId));
+      if (f) {
+        setFloor(f);
+        const g = await mapsApi.floorGraph(f.id);
+        setGraph(g.data || { nodes: [], edges: [] });
+      }
+
+      setStart({ x: Number(loc.x), y: Number(loc.y) });
+      setRoute([]);
+      setStartMode("room");
+      setMsg(`Start set near room ${loc.roomCode} ✅`);
+    } catch (e) {
+      setMsg(e.response?.data?.error || "Could not find that room location");
+    }
+  };
   const requestRoute = async () => {
     if (!floor?.id) return;
 
@@ -190,6 +213,41 @@ export default function MapNavigate() {
             <p className="authSub" style={{ margin: 0 }}>
               Click on the map to set your start point, then press “Route”.
             </p>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              gap: 10,
+              marginTop: 10,
+              flexWrap: "wrap",
+            }}
+          >
+            <input
+              className="authInput"
+              style={{ maxWidth: 260 }}
+              placeholder="Closest room (e.g. 111170)"
+              value={startRoom}
+              onChange={(e) => setStartRoom(e.target.value)}
+            />
+            <button
+              className="authBtn"
+              type="button"
+              onClick={setStartFromRoom}
+            >
+              <span className="btnShine" />
+              Set start
+            </button>
+
+            <button
+              className="authBtn authBtnSecondary"
+              type="button"
+              onClick={() => {
+                setStartMode("click");
+                setMsg("Click on map to set start point");
+              }}
+            >
+              Use click mode
+            </button>
           </div>
 
           <button className="authBtn" type="button" onClick={requestRoute}>

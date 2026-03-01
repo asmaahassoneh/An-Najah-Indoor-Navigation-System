@@ -518,6 +518,31 @@ class MapsController {
       return res.status(500).json({ error: e.message });
     }
   }
+  static async searchRoomLocations(req, res) {
+    try {
+      const q = String(req.query.q || "").trim();
+      if (!q) return res.json([]);
+
+      const list = await RoomLocation.findAll({
+        where: {
+          roomCode: { [require("sequelize").Op.iLike]: `%${q}%` },
+        },
+        limit: 20,
+        order: [["roomCode", "ASC"]],
+      });
+
+      return res.json(
+        list.map((r) => ({
+          roomCode: r.roomCode,
+          floorId: r.floorId,
+          x: r.x,
+          y: r.y,
+        })),
+      );
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
 }
 
 module.exports = MapsController;

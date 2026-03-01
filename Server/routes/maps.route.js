@@ -10,6 +10,7 @@ router.get("/floors/:floorId/rooms", requireAuth, MapsController.getFloorRooms);
 router.get("/route", requireAuth, MapsController.routeToRoom);
 router.get("/room/:roomCode", MapsController.getRoomLocation);
 router.get("/route-multi", requireAuth, MapsController.routeMulti);
+router.get("/rooms/search", MapsController.searchRoomLocations);
 
 router.post(
   "/floors",
