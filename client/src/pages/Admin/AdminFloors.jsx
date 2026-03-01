@@ -45,11 +45,25 @@ export default function AdminFloors() {
     name: "",
     faculty: "Engineering",
     imageUrl: "",
-    width: "1100",
+    width: "1270",
     height: "800",
     _autoName: true,
     _autoImg: true,
   });
+
+  const deleteFloor = async (id) => {
+    if (!window.confirm("Delete this floor and ALL its nodes/edges/rooms?"))
+      return;
+
+    try {
+      setMsg("");
+      await API.delete(`/maps/floors/${id}`);
+      setMsg("Floor deleted ✅");
+      fetchFloors();
+    } catch (e) {
+      setMsg(e.response?.data?.error || "Failed to delete floor");
+    }
+  };
 
   const fetchFloors = async () => {
     try {
@@ -84,7 +98,7 @@ export default function AdminFloors() {
         name: "",
         faculty: "Engineering",
         imageUrl: "",
-        width: "1100",
+        width: "1270",
         height: "800",
         _autoName: true,
         _autoImg: true,
@@ -186,6 +200,7 @@ export default function AdminFloors() {
                 <th>Faculty</th>
                 <th>Image</th>
                 <th>Size</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -197,6 +212,16 @@ export default function AdminFloors() {
                   <td>{f.imageUrl}</td>
                   <td>
                     {f.width} × {f.height}
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      className="action-btn"
+                      onClick={() => deleteFloor(f.id)}
+                      style={{ background: "#ff4d4d" }}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}

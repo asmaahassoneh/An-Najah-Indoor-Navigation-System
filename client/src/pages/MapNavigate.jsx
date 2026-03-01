@@ -77,7 +77,7 @@ export default function MapNavigate() {
     }
   };
 
-  const stageW = floor?.width || 1200;
+  const stageW = floor?.width || 1000;
   const stageH = floor?.height || 800;
 
   return (
@@ -87,7 +87,7 @@ export default function MapNavigate() {
 
       <div
         className="authCard authCardEnter"
-        style={{ width: "min(1200px, 96vw)" }}
+        style={{ width: "min(1350px, 96vw)" }}
       >
         <div
           style={{

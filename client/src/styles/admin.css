@@ -511,3 +511,266 @@
   border-color: rgba(143, 92, 255, 0.7);
   box-shadow: 0 0 18px rgba(143, 92, 255, 0.35);
 }
+
+.gbPage {
+  width: 100vw;
+  min-height: calc(100vh - 90px);
+  display: grid;
+  place-items: start center;
+  padding: 36px 16px;
+  overflow: hidden;
+
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+
+  background:
+    radial-gradient(
+      1200px 700px at 25% 25%,
+      rgba(143, 92, 255, 0.22),
+      transparent 60%
+    ),
+    radial-gradient(
+      1100px 650px at 80% 75%,
+      rgba(80, 200, 255, 0.18),
+      transparent 55%
+    ),
+    rgba(2, 6, 23, 0.35);
+}
+
+.gbCard {
+  width: min(1300px, 96vw);
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.gbHeader {
+  padding: 22px 22px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.75),
+    rgba(15, 23, 42, 0.35)
+  );
+  backdrop-filter: blur(18px);
+}
+
+.gbTitleRow {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.gbBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(143, 92, 255, 0.14);
+  border: 1px solid rgba(143, 92, 255, 0.22);
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  height: 34px;
+}
+
+.gbTitle {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+}
+
+.gbSub {
+  margin: 6px 0 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+}
+
+.gbControls {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.gbGroup {
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.gbLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 10px 0 6px;
+}
+
+.gbInput,
+.gbSelect {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  outline: none;
+  transition: 0.25s ease;
+}
+
+.gbInput:focus,
+.gbSelect:focus {
+  border-color: rgba(143, 92, 255, 0.75);
+  box-shadow: 0 0 18px rgba(143, 92, 255, 0.35);
+  background: rgba(143, 92, 255, 0.08);
+}
+
+.gbSelect option {
+  background: #0f172a;
+  color: white;
+}
+
+.gbActions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.gbActionBlock {
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.gbActionTitle {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 10px;
+}
+
+.gbActionRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.gbBtn {
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-weight: 800;
+  color: white;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 200ms ease,
+    border-color 200ms ease;
+  user-select: none;
+}
+
+.gbBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.25);
+}
+
+.gbBtnSoft {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.gbBtnActive {
+  background: linear-gradient(
+    135deg,
+    rgba(143, 92, 255, 0.75),
+    rgba(109, 60, 255, 0.75)
+  );
+  border-color: rgba(143, 92, 255, 0.4);
+}
+
+.gbBtnDanger {
+  background: rgba(255, 90, 90, 0.12);
+  border-color: rgba(255, 90, 90, 0.25);
+}
+
+.gbBtnDangerActive {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 90, 90, 0.55),
+    rgba(255, 60, 60, 0.55)
+  );
+  border-color: rgba(255, 90, 90, 0.4);
+}
+
+.gbBtnGhost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.18);
+  opacity: 0.95;
+}
+
+.gbStatusRow {
+  margin-top: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.gbPills {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.gbPill {
+  padding: 9px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+}
+
+.gbToast {
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(143, 92, 255, 0.25);
+  background: rgba(143, 92, 255, 0.1);
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 800;
+  max-width: min(620px, 100%);
+}
+
+.gbCanvasWrap {
+  padding: 16px;
+}
+
+.gbCanvasInner {
+  border-radius: 18px;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 980px) {
+  .gbControls {
+    grid-template-columns: 1fr;
+  }
+}

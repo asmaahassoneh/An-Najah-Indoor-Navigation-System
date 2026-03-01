@@ -268,6 +268,21 @@ class MapsController {
       return res.status(500).json({ error: "Failed to clear floor graph" });
     }
   }
+  static async deleteFloor(req, res) {
+    const floorId = Number(req.params.id);
+
+    if (!floorId) return res.status(400).json({ error: "Invalid floor id" });
+
+    await MapEdge.destroy({ where: { floorId } });
+    await MapNode.destroy({ where: { floorId } });
+    await RoomLocation.destroy({ where: { floorId } });
+
+    const deleted = await Floor.destroy({ where: { id: floorId } });
+
+    if (!deleted) return res.status(404).json({ error: "Floor not found" });
+
+    return res.json({ message: "Floor deleted ✅" });
+  }
 }
 
 module.exports = MapsController;

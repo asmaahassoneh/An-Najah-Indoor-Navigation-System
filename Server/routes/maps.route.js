@@ -54,5 +54,11 @@ router.delete(
   requireRole("admin"),
   MapsController.clearFloorGraph,
 );
+router.delete(
+  "/floors/:id",
+  requireAuth,
+  requireRole("admin"),
+  MapsController.deleteFloor,
+);
 
 module.exports = router;
