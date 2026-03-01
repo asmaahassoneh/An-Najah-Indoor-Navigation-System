@@ -7,4 +7,12 @@ export const mapsApi = {
 
   routeToRoom: ({ floorId, fromX, fromY, toRoom }) =>
     API.get(`/maps/route`, { params: { floorId, fromX, fromY, toRoom } }),
+
+  roomLocation: (roomCode) =>
+    API.get(`/maps/room/${encodeURIComponent(roomCode)}`),
+
+  routeMulti: ({ fromFloorId, fromX, fromY, toRoom, prefer }) =>
+    API.get("/maps/route-multi", {
+      params: { fromFloorId, fromX, fromY, toRoom, prefer },
+    }),
 };

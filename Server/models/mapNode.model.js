@@ -6,6 +6,19 @@ const MapNode = sequelize.define("MapNode", {
   x: { type: DataTypes.FLOAT, allowNull: false },
   y: { type: DataTypes.FLOAT, allowNull: false },
   label: { type: DataTypes.STRING, allowNull: true },
+
+  type: {
+    type: DataTypes.ENUM(
+      "hall",
+      "room",
+      "stairs",
+      "elevator",
+      "entrance",
+      "exit",
+    ),
+    allowNull: false,
+    defaultValue: "hall",
+  },
 });
 
 module.exports = MapNode;

@@ -8,6 +8,8 @@ router.get("/floors", requireAuth, MapsController.getFloors);
 router.get("/floors/:floorId/graph", requireAuth, MapsController.getFloorGraph);
 router.get("/floors/:floorId/rooms", requireAuth, MapsController.getFloorRooms);
 router.get("/route", requireAuth, MapsController.routeToRoom);
+router.get("/room/:roomCode", MapsController.getRoomLocation);
+router.get("/route-multi", requireAuth, MapsController.routeMulti);
 
 router.post(
   "/floors",

@@ -20,6 +20,8 @@ export default function AdminGraphBuilder() {
   const [edges, setEdges] = useState([]);
   const [msg, setMsg] = useState("");
   const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [nodeType, setNodeType] = useState("hall");
+  const [nodeLabel, setNodeLabel] = useState("");
 
   const floor = useMemo(
     () => floors.find((f) => String(f.id) === String(floorId)) || null,
@@ -76,6 +78,11 @@ export default function AdminGraphBuilder() {
         floorId: Number(floorId),
         x: pos.x,
         y: pos.y,
+        type: nodeType,
+        label:
+          nodeType === "stairs" || nodeType === "elevator"
+            ? nodeLabel.trim().toUpperCase()
+            : null,
       });
       setMsg("Node added ✅");
       await reloadGraph();
@@ -300,6 +307,31 @@ export default function AdminGraphBuilder() {
               <div className="gbActionBlock">
                 <div className="gbActionTitle">Mode</div>
                 <div className="gbActionRow">
+                  <div className="selectWrap">
+                    <select
+                      className="selectControl"
+                      value={nodeType}
+                      onChange={(e) => setNodeType(e.target.value)}
+                    >
+                      <option value="hall">Hall</option>
+                      <option value="stairs">Stairs</option>
+                      <option value="elevator">Elevator</option>
+                      <option value="entrance">Entrance</option>
+                      <option value="exit">Exit</option>
+                    </select>
+
+                    <span className="selectChevron" aria-hidden="true">
+                      ▾
+                    </span>
+                  </div>
+                  <input
+                    className="authInput"
+                    type="text"
+                    placeholder="Connector Label (e.g. E1, S1)"
+                    value={nodeLabel}
+                    onChange={(e) => setNodeLabel(e.target.value)}
+                    style={{ maxWidth: 220 }}
+                  />
                   <button
                     className={`gbBtn ${mode === "node" ? "gbBtnActive" : "gbBtnSoft"}`}
                     type="button"
@@ -514,7 +546,15 @@ export default function AdminGraphBuilder() {
                       <Circle
                         x={n.x}
                         y={n.y}
-                        radius={isSelected ? 5 : 3}
+                        radius={
+                          isSelected
+                            ? n.type === "stairs" || n.type === "elevator"
+                              ? 12
+                              : 5
+                            : n.type === "stairs" || n.type === "elevator"
+                              ? 10
+                              : 3
+                        }
                         fill="red"
                         onClick={async (evt) => {
                           evt.cancelBubble = true;
@@ -552,6 +592,16 @@ export default function AdminGraphBuilder() {
 
                           await connectNodes(selectedNodeId, n.id);
                         }}
+                      />
+                      <Text
+                        x={n.x + 8}
+                        y={n.y - 8}
+                        fontSize={12}
+                        text={
+                          n.type === "stairs" || n.type === "elevator"
+                            ? `${n.type.toUpperCase()} ${n.label || ""}`
+                            : ""
+                        }
                       />
                     </React.Fragment>
                   );
