@@ -3,6 +3,7 @@ import "./styles/navbar.css";
 import "./styles/auth-animated.css";
 import "./styles/admin.css";
 import "./styles/schedule.css";
+import "./styles/MapNavigate.css";
 
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";

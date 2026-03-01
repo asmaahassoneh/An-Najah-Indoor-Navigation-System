@@ -111,7 +111,7 @@ export default function AdminFloors() {
   };
 
   return (
-    <div className="users-page">
+    <div className="users-page navPage">
       <div className="users-card">
         <h1 className="users-title">Manage Floors</h1>
 
@@ -216,9 +216,8 @@ export default function AdminFloors() {
                   <td>
                     <button
                       type="button"
-                      className="action-btn"
+                      className={"gbBtn gbBtnDanger"}
                       onClick={() => deleteFloor(f.id)}
-                      style={{ background: "#ff4d4d" }}
                     >
                       Delete
                     </button>

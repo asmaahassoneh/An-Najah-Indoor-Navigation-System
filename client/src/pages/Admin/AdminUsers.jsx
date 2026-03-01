@@ -156,7 +156,7 @@ export default function AdminUsers() {
                         </>
                       ) : (
                         <button
-                          className="action-btn"
+                          className="action-btn gbBtn gbBtnSoft"
                           onClick={() => startEdit(u)}
                         >
                           Edit
@@ -164,7 +164,7 @@ export default function AdminUsers() {
                       )}
 
                       <button
-                        className="action-btn delete-btn"
+                        className="action-btn delete-btn gbBtnDanger"
                         onClick={() => deleteUser(u.id)}
                       >
                         Delete

@@ -1,0 +1,354 @@
+.navPage {
+  width: 100vw;
+  min-height: calc(100vh - 90px);
+  display: grid;
+  place-items: start center;
+  padding: 36px 16px;
+  overflow: hidden;
+
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+
+  background:
+    radial-gradient(
+      1200px 700px at 25% 25%,
+      rgba(143, 92, 255, 0.22),
+      transparent 60%
+    ),
+    radial-gradient(
+      1100px 650px at 80% 75%,
+      rgba(80, 200, 255, 0.18),
+      transparent 55%
+    ),
+    rgba(2, 6, 23, 0.35);
+}
+
+.navWrap {
+  width: 100%;
+  display: grid;
+  place-items: start center;
+}
+
+.navCard {
+  width: min(1400px, 96vw);
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+
+  animation: heroIn 700ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+.navHeader {
+  padding: 22px 22px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.78),
+    rgba(15, 23, 42, 0.35)
+  );
+  backdrop-filter: blur(18px);
+}
+
+@keyframes heroIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.navTitleRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.navBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(143, 92, 255, 0.14);
+  border: 1px solid rgba(143, 92, 255, 0.22);
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  height: 34px;
+  width: fit-content;
+
+  animation: badgePulse 2.2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%,
+  100% {
+    transform: translateY(0);
+    box-shadow: 0 0 0 rgba(143, 92, 255, 0);
+  }
+  50% {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(143, 92, 255, 0.18);
+  }
+}
+
+.navPills {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.navPill {
+  padding: 9px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  backdrop-filter: blur(10px);
+}
+
+.navTitle {
+  margin: 14px 0 6px;
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+
+  background: linear-gradient(
+    90deg,
+    #ffffff,
+    rgba(255, 255, 255, 0.65),
+    #ffffff
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  animation: shimmer 4s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 220% 50%;
+  }
+}
+
+.navTitleCode {
+  color: inherit;
+}
+
+.navSub {
+  margin: 0 0 14px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 15px;
+}
+
+.navControls {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 340px 1fr 360px;
+  gap: 16px;
+  align-items: start;
+}
+
+.navGroup {
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.navGroupActions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.navLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 8px;
+}
+
+.navMeta {
+  margin-top: 10px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.navRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.navRowEnd {
+  justify-content: flex-end;
+}
+
+.navInput {
+  height: 46px;
+  min-width: 260px;
+  flex: 1 1 260px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  outline: none;
+  transition: 0.25s ease;
+  backdrop-filter: blur(14px);
+}
+
+.navInput:focus {
+  border-color: rgba(143, 92, 255, 0.75);
+  box-shadow: 0 0 18px rgba(143, 92, 255, 0.35);
+  background: rgba(143, 92, 255, 0.08);
+}
+
+.navBtn {
+  height: 46px;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-weight: 900;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 200ms ease,
+    border-color 200ms ease,
+    opacity 200ms ease;
+}
+
+.navBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.25);
+}
+
+.navBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.navBtnPrimary {
+  background: linear-gradient(
+    135deg,
+    rgba(143, 92, 255, 0.75),
+    rgba(109, 60, 255, 0.75)
+  );
+  border-color: rgba(143, 92, 255, 0.4);
+}
+
+.navBtnSoft {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.navBtnActive {
+  border-color: rgba(143, 92, 255, 0.6);
+  box-shadow: 0 0 0 4px rgba(140, 92, 255, 0.14);
+}
+
+.navBtnBig {
+  min-width: 180px;
+}
+
+.btnShine {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    500px circle at var(--x, 30%) var(--y, 30%),
+    rgba(255, 255, 255, 0.22),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+}
+
+.navBtn:hover .btnShine {
+  opacity: 1;
+}
+
+.navStepRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.navToast {
+  margin-top: 14px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(143, 92, 255, 0.25);
+  background: rgba(143, 92, 255, 0.1);
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 900;
+  max-width: min(720px, 100%);
+}
+
+.navCanvasWrap {
+  padding: 16px;
+}
+
+.navCanvasInner {
+  border-radius: 18px;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 1100px) {
+  .navControls {
+    grid-template-columns: 1fr;
+  }
+  .navRowEnd {
+    justify-content: flex-start;
+  }
+  .navBtnBig {
+    min-width: 160px;
+  }
+}
+
+@media (max-width: 560px) {
+  .navTitle {
+    font-size: 32px;
+  }
+  .navInput {
+    min-width: 100%;
+    flex-basis: 100%;
+  }
+}
+
+.navPage {
+  padding-top: 110px;
+  min-height: 100vh;
+}

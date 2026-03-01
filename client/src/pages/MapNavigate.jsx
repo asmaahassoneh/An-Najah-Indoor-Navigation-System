@@ -98,6 +98,7 @@ export default function MapNavigate() {
       setMsg(e.response?.data?.error || "Could not find that room location");
     }
   };
+
   const requestRoute = async () => {
     if (!floor?.id) return;
 
@@ -125,8 +126,7 @@ export default function MapNavigate() {
       setSegIndex(0);
 
       const first = segs[0];
-      const pts = (first.points || []).flatMap((p) => [p.x, p.y]);
-      setRoute(pts);
+      setRoute((first.points || []).flatMap((p) => [p.x, p.y]));
       setMsg(first.instruction || "Route ready ✅");
 
       const f = floors.find((x) => Number(x.id) === Number(first.floorId));
@@ -139,238 +139,251 @@ export default function MapNavigate() {
       setMsg(e.response?.data?.error || "No route found");
     }
   };
+
   const stageW = floor?.width || 1000;
   const stageH = floor?.height || 800;
 
   return (
-    <div className="authPage">
-      <div className="authGlow" />
-      <div className="authNoise" />
+    <div className="navPage">
+      <div className="navWrap">
+        <div className="navCard">
+          <div className="navHeader">
+            <div className="navTitleRow">
+              <span className="navBadge">Navigation</span>
 
-      <div
-        className="authCard authCardEnter"
-        style={{ width: "min(1350px, 96vw)" }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            gap: 12,
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <div className="authBadge">Navigation</div>
-
-            <div
-              style={{
-                display: "flex",
-                gap: 10,
-                alignItems: "center",
-                marginTop: 10,
-              }}
-            >
-              <select
-                value={floor?.id || ""}
-                onChange={async (e) => {
-                  const f = floors.find((x) => x.id === Number(e.target.value));
-                  setFloor(f || null);
-                  setRoute([]);
-                  setMsg("");
-                  if (f) {
-                    try {
-                      const g = await mapsApi.floorGraph(f.id);
-                      setGraph(g.data || { nodes: [], edges: [] });
-                    } catch {
-                      setGraph({ nodes: [], edges: [] });
-                      setMsg("Failed to load graph");
-                    }
-                  } else {
-                    setGraph({ nodes: [], edges: [] });
-                  }
-                }}
-                className="authInput"
-                style={{ maxWidth: 260 }}
-              >
-                <option value="" disabled>
-                  Select floor
-                </option>
-                {floors.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.name}
-                  </option>
-                ))}
-              </select>
-
-              <div style={{ opacity: 0.8, fontSize: 14 }}>
-                Graph: {graph.nodes.length} nodes / {graph.edges.length} edges
+              <div className="navPills">
+                <span className="navPill">
+                  Graph: {graph.nodes.length} nodes / {graph.edges.length} edges
+                </span>
+                {floor?.name && (
+                  <span className="navPill">Loaded: {floor.name}</span>
+                )}
               </div>
             </div>
 
-            <h2 className="authTitle" style={{ marginBottom: 4 }}>
-              Navigate to {roomCode}
+            <h2 className="navTitle">
+              Navigate to <span className="navTitleCode">{roomCode}</span>
             </h2>
-            <p className="authSub" style={{ margin: 0 }}>
-              Click on the map to set your start point, then press “Route”.
+            <p className="navSub">
+              {startMode === "click"
+                ? "Click on the map to set your start point, then press “Route”."
+                : "Start is set from a room. You can switch back to click mode."}
             </p>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              gap: 10,
-              marginTop: 10,
-              flexWrap: "wrap",
-            }}
-          >
-            <input
-              className="authInput"
-              style={{ maxWidth: 260 }}
-              placeholder="Closest room (e.g. 111170)"
-              value={startRoom}
-              onChange={(e) => setStartRoom(e.target.value)}
-            />
-            <button
-              className="authBtn"
-              type="button"
-              onClick={setStartFromRoom}
-            >
-              <span className="btnShine" />
-              Set start
-            </button>
 
-            <button
-              className="authBtn authBtnSecondary"
-              type="button"
-              onClick={() => {
-                setStartMode("click");
-                setMsg("Click on map to set start point");
-              }}
-            >
-              Use click mode
-            </button>
-          </div>
+            <div className="navControls">
+              <div className="navGroup">
+                <label className="navLabel">Floor</label>
 
-          <button className="authBtn" type="button" onClick={requestRoute}>
-            <span className="btnShine" />
-            Route
-          </button>
-          {segments.length > 1 && (
-            <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
-              <button
-                className="authBtn authBtnSecondary"
-                type="button"
-                disabled={segIndex <= 0}
-                onClick={async () => {
-                  const i = segIndex - 1;
-                  const seg = segments[i];
-                  setSegIndex(i);
+                <div className="selectWrap" style={{ width: "100%" }}>
+                  <select
+                    className="selectControl"
+                    value={floor?.id || ""}
+                    onChange={async (e) => {
+                      const f = floors.find(
+                        (x) => x.id === Number(e.target.value),
+                      );
+                      setFloor(f || null);
+                      setRoute([]);
+                      setMsg("");
 
-                  const f = floors.find(
-                    (x) => Number(x.id) === Number(seg.floorId),
-                  );
-                  if (f) {
-                    setFloor(f);
-                    const g = await mapsApi.floorGraph(f.id);
-                    setGraph(g.data || { nodes: [], edges: [] });
-                  }
+                      if (f) {
+                        try {
+                          const g = await mapsApi.floorGraph(f.id);
+                          setGraph(g.data || { nodes: [], edges: [] });
+                        } catch {
+                          setGraph({ nodes: [], edges: [] });
+                          setMsg("Failed to load graph");
+                        }
+                      } else {
+                        setGraph({ nodes: [], edges: [] });
+                      }
+                    }}
+                  >
+                    <option value="" disabled>
+                      Select floor
+                    </option>
+                    {floors.map((f) => (
+                      <option key={f.id} value={f.id}>
+                        {f.name}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="selectChevron">▾</span>
+                </div>
 
-                  setRoute((seg.points || []).flatMap((p) => [p.x, p.y]));
-                  setMsg(seg.instruction || "");
-                }}
-              >
-                Previous
-              </button>
+                <div className="navMeta">
+                  Start: ({Math.round(start.x)}, {Math.round(start.y)})
+                </div>
+              </div>
 
-              <button
-                className="authBtn"
-                type="button"
-                disabled={segIndex >= segments.length - 1}
-                onClick={async () => {
-                  const i = segIndex + 1;
-                  const seg = segments[i];
-                  setSegIndex(i);
+              <div className="navGroup">
+                <label className="navLabel">Start point</label>
 
-                  const f = floors.find(
-                    (x) => Number(x.id) === Number(seg.floorId),
-                  );
-                  if (f) {
-                    setFloor(f);
-                    const g = await mapsApi.floorGraph(f.id);
-                    setGraph(g.data || { nodes: [], edges: [] });
-                  }
+                <div className="navRow">
+                  <input
+                    className="navInput"
+                    placeholder="Closest room (e.g. 111170)"
+                    value={startRoom}
+                    onChange={(e) => setStartRoom(e.target.value)}
+                  />
 
-                  setRoute((seg.points || []).flatMap((p) => [p.x, p.y]));
-                  setMsg(seg.instruction || "");
-                }}
-              >
-                Next step
-              </button>
+                  <button
+                    className="navBtn navBtnPrimary"
+                    type="button"
+                    onClick={setStartFromRoom}
+                  >
+                    <span className="btnShine" />
+                    Set start
+                  </button>
+
+                  <button
+                    className={`navBtn navBtnSoft ${startMode === "click" ? "navBtnActive" : ""}`}
+                    type="button"
+                    onClick={() => {
+                      setStartMode("click");
+                      setMsg("Click on map to set start point");
+                    }}
+                  >
+                    Use click mode
+                  </button>
+                </div>
+              </div>
+
+              <div className="navGroup navGroupActions">
+                <label className="navLabel">Route</label>
+
+                <div className="navRow navRowEnd">
+                  <button
+                    className="navBtn navBtnPrimary navBtnBig"
+                    type="button"
+                    onClick={requestRoute}
+                  >
+                    <span className="btnShine" />
+                    Route
+                  </button>
+
+                  {segments.length > 1 && (
+                    <div className="navStepRow">
+                      <button
+                        className="navBtn navBtnSoft"
+                        type="button"
+                        disabled={segIndex <= 0}
+                        onClick={async () => {
+                          const i = segIndex - 1;
+                          const seg = segments[i];
+                          setSegIndex(i);
+
+                          const f = floors.find(
+                            (x) => Number(x.id) === Number(seg.floorId),
+                          );
+                          if (f) {
+                            setFloor(f);
+                            const g = await mapsApi.floorGraph(f.id);
+                            setGraph(g.data || { nodes: [], edges: [] });
+                          }
+
+                          setRoute(
+                            (seg.points || []).flatMap((p) => [p.x, p.y]),
+                          );
+                          setMsg(seg.instruction || "");
+                        }}
+                      >
+                        Previous
+                      </button>
+
+                      <button
+                        className="navBtn navBtnPrimary"
+                        type="button"
+                        disabled={segIndex >= segments.length - 1}
+                        onClick={async () => {
+                          const i = segIndex + 1;
+                          const seg = segments[i];
+                          setSegIndex(i);
+
+                          const f = floors.find(
+                            (x) => Number(x.id) === Number(seg.floorId),
+                          );
+                          if (f) {
+                            setFloor(f);
+                            const g = await mapsApi.floorGraph(f.id);
+                            setGraph(g.data || { nodes: [], edges: [] });
+                          }
+
+                          setRoute(
+                            (seg.points || []).flatMap((p) => [p.x, p.y]),
+                          );
+                          setMsg(seg.instruction || "");
+                        }}
+                      >
+                        Next step
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-          )}
-        </div>
 
-        {!!msg && (
-          <p className="authMsg" style={{ marginTop: 10 }}>
-            {msg}
-          </p>
-        )}
+            {!!msg && <div className="navToast">{msg}</div>}
+          </div>
 
-        <div style={{ marginTop: 12, overflow: "auto", borderRadius: 14 }}>
-          <Stage
-            width={stageW}
-            height={stageH}
-            onMouseDown={(e) => {
-              if (startMode !== "click") return;
-              
-              const pos = e.target.getStage()?.getPointerPosition();
-              if (!pos) return;
-              setStart({ x: pos.x, y: pos.y });
-              setRoute([]);
-              setMsg("Start point updated");
-            }}
-          >
-            <Layer>
-              <KonvaImage
-                image={img}
-                x={0}
-                y={0}
+          <div className="navCanvasWrap">
+            <div className="navCanvasInner">
+              <Stage
                 width={stageW}
                 height={stageH}
-              />
+                onMouseDown={(e) => {
+                  if (startMode !== "click") return;
+                  const pos = e.target.getStage()?.getPointerPosition();
+                  if (!pos) return;
+                  setStart({ x: pos.x, y: pos.y });
+                  setRoute([]);
+                  setMsg("Start point updated");
+                }}
+              >
+                <Layer>
+                  <KonvaImage
+                    image={img}
+                    x={0}
+                    y={0}
+                    width={stageW}
+                    height={stageH}
+                  />
 
-              <Circle x={start.x} y={start.y} radius={8} />
-              <Text
-                x={start.x + 10}
-                y={start.y - 8}
-                text="Start"
-                fontSize={14}
-              />
+                  <Circle x={start.x} y={start.y} radius={8} />
+                  <Text
+                    x={start.x + 10}
+                    y={start.y - 8}
+                    text="Start"
+                    fontSize={14}
+                  />
 
-              {roomLoc &&
-                floor?.id &&
-                Number(roomLoc.floorId) === Number(floor.id) && (
-                  <>
-                    <Circle x={roomLoc.x} y={roomLoc.y} radius={8} />
-                    <Text
-                      x={roomLoc.x + 10}
-                      y={roomLoc.y - 8}
-                      text={`Room ${roomCode}`}
-                      fontSize={14}
+                  {roomLoc &&
+                    floor?.id &&
+                    Number(roomLoc.floorId) === Number(floor.id) && (
+                      <>
+                        <Circle x={roomLoc.x} y={roomLoc.y} radius={8} />
+                        <Text
+                          x={roomLoc.x + 10}
+                          y={roomLoc.y - 8}
+                          text={`Room ${roomCode}`}
+                          fontSize={14}
+                        />
+                      </>
+                    )}
+
+                  {route.length >= 4 && (
+                    <Line
+                      points={route}
+                      stroke="red"
+                      strokeWidth={6}
+                      lineCap="round"
+                      lineJoin="round"
                     />
-                  </>
-                )}
-
-              {route.length >= 4 && (
-                <Line
-                  points={route}
-                  stroke="red"
-                  strokeWidth={6}
-                  lineCap="round"
-                  lineJoin="round"
-                />
-              )}
-            </Layer>
-          </Stage>
+                  )}
+                </Layer>
+              </Stage>
+            </div>
+          </div>
         </div>
       </div>
     </div>

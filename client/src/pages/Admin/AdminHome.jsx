@@ -4,7 +4,7 @@ export default function AdminHome() {
   const navigate = useNavigate();
 
   return (
-    <div className="adminWrap">
+    <div className="adminWrap navPage">
       <div className="adminHero">
         <div className="badge">Admin</div>
 

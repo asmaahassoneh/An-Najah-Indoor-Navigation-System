@@ -207,7 +207,7 @@ export default function AdminRooms() {
                         <div className="admin-actions">
                           <button
                             type="button"
-                            className="action-btn"
+                            className="action-btn gbBtn gbBtnSoft"
                             onClick={() => startEdit(r)}
                           >
                             Edit
@@ -215,7 +215,7 @@ export default function AdminRooms() {
 
                           <button
                             type="button"
-                            className="action-btn delete-btn"
+                            className="action-btn delete-btn gbBtnDanger"
                             onClick={() => deleteRoom(r.id)}
                           >
                             Delete

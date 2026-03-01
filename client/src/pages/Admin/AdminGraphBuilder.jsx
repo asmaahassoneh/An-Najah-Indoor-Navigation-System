@@ -254,7 +254,7 @@ export default function AdminGraphBuilder() {
   }, [nodes, edges]);
 
   return (
-    <div className="gbPage">
+    <div className="gbPage navPage">
       <div className="gbCard">
         <div className="gbHeader">
           <div className="gbTitleRow">
