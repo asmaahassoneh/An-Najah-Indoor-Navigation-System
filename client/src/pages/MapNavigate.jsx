@@ -320,6 +320,8 @@ export default function MapNavigate() {
             width={stageW}
             height={stageH}
             onMouseDown={(e) => {
+              if (startMode !== "click") return;
+              
               const pos = e.target.getStage()?.getPointerPosition();
               if (!pos) return;
               setStart({ x: pos.x, y: pos.y });
