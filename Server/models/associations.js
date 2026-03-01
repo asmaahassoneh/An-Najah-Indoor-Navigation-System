@@ -15,8 +15,8 @@ ScheduleItem.belongsTo(User, { foreignKey: "userId" });
 Floor.hasMany(RoomLocation, { foreignKey: "floorId", onDelete: "CASCADE" });
 RoomLocation.belongsTo(Floor, { foreignKey: "floorId" });
 
-// Room.hasOne(RoomLocation, { foreignKey: "roomId", onDelete: "CASCADE" });
-// RoomLocation.belongsTo(Room, { foreignKey: "roomId" });
+Room.hasOne(RoomLocation, { foreignKey: "roomId", onDelete: "CASCADE" });
+RoomLocation.belongsTo(Room, { foreignKey: "roomId" });
 
 Floor.hasMany(MapNode, { foreignKey: "floorId", onDelete: "CASCADE" });
 MapNode.belongsTo(Floor, { foreignKey: "floorId" });
