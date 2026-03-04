@@ -16,6 +16,11 @@ export default function MySchedule() {
   );
 }
 
+function isOnlineRoom(code) {
+  const v = String(code || "").trim();
+  return v === "509999" || v.toUpperCase() === "ONLINE";
+}
+
 function Inner() {
   const router = useRouter();
   const [items, setItems] = useState([]);
@@ -75,30 +80,38 @@ function Inner() {
 
         {!!items.length && (
           <ScrollView style={{ marginTop: 12 }}>
-            {items.map((x) => (
-              <View key={x.id} style={styles.card}>
-                <Text style={styles.course}>{x.courseName}</Text>
-                <Text style={styles.meta}>
-                  {x.day} • {x.startTime}-{x.endTime} • {x.roomCode}
-                </Text>
-                <Text style={styles.meta}>Instructor: {x.instructor}</Text>
+            {items.map((x) => {
+              const online = isOnlineRoom(x.roomCode);
 
-                <Pressable
-                  onPress={() => alert(`Navigate to ${x.roomCode}`)}
-                  style={[
-                    styles.btn,
-                    {
-                      marginTop: 10,
-                      backgroundColor: "rgba(255,255,255,0.10)",
-                      borderWidth: 1,
-                      borderColor: "rgba(255,255,255,0.14)",
-                    },
-                  ]}
-                >
-                  <Text style={styles.btnText}>Navigate</Text>
-                </Pressable>
-              </View>
-            ))}
+              return (
+                <View key={x.id} style={styles.card}>
+                  <Text style={styles.course}>{x.courseName}</Text>
+
+                  <Text style={styles.meta}>
+                    {x.day} • {x.startTime}-{x.endTime} • {x.roomCode}
+                  </Text>
+
+                  <Text style={styles.meta}>Instructor: {x.instructor}</Text>
+
+                  {online ? (
+                    <Text style={styles.onlineNote}>
+                      Online class — no navigation
+                    </Text>
+                  ) : (
+                    <Pressable
+                      onPress={() => router.push(`/navigate/${x.roomCode}`)}
+                      style={[
+                        styles.btn,
+                        styles.btnSecondary,
+                        { marginTop: 10 },
+                      ]}
+                    >
+                      <Text style={styles.btnText}>Navigate</Text>
+                    </Pressable>
+                  )}
+                </View>
+              );
+            })}
           </ScrollView>
         )}
       </View>
@@ -115,6 +128,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   title: { color: "white", fontSize: 26, fontWeight: "900" },
+
   btn: {
     height: 44,
     paddingHorizontal: 12,
@@ -123,7 +137,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#8f5cff",
   },
+  btnSecondary: {
+    backgroundColor: "rgba(255,255,255,0.10)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.14)",
+  },
   btnText: { color: "white", fontWeight: "900" },
+
   card: {
     padding: 14,
     borderRadius: 16,
@@ -134,4 +154,10 @@ const styles = StyleSheet.create({
   },
   course: { color: "white", fontSize: 16, fontWeight: "900" },
   meta: { color: "rgba(255,255,255,0.75)", marginTop: 4 },
+
+  onlineNote: {
+    marginTop: 10,
+    color: "rgba(255,255,255,0.65)",
+    fontWeight: "900",
+  },
 });
