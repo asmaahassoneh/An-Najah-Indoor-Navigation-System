@@ -63,5 +63,8 @@ router.delete(
   requireRole("admin"),
   MapsController.deleteFloor,
 );
-
+router.post(
+  "/floors/:floorId/rooms/bulk",
+  MapsController.bulkUpsertRoomLocations,
+);
 module.exports = router;

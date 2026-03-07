@@ -245,6 +245,29 @@ class UserService {
 
     return targetUser;
   }
+  static async getProfessors() {
+    return await User.findAll({
+      where: { role: "professor" },
+      attributes: ["id", "username", "email", "role", "roomId", "hasRoom"],
+      order: [["username", "ASC"]],
+    });
+  }
+
+  static async getChatUserById(id) {
+    const user = await User.findByPk(id, {
+      attributes: ["id", "username", "email", "role"],
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (!["student", "professor"].includes(user.role)) {
+      throw new Error("Invalid chat user");
+    }
+
+    return user;
+  }
 }
 
 module.exports = UserService;

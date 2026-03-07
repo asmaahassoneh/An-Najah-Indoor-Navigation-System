@@ -25,6 +25,8 @@ import AdminHome from "./pages/Admin/AdminHome";
 import AdminFloors from "./pages/Admin/AdminFloors";
 import MapNavigate from "./pages/MapNavigate";
 import AdminGraphBuilder from "./pages/Admin/AdminGraphBuilder";
+import Inbox from "./pages/Inbox";
+import ChatPage from "./pages/ChatPage";
 
 export default function App() {
   return (
@@ -32,6 +34,23 @@ export default function App() {
       <Navbar />
 
       <Routes>
+        <Route
+          path="/inbox"
+          element={
+            <ProtectedRoute>
+              <Inbox />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/chat/:userId"
+          element={
+            <ProtectedRoute>
+              <ChatPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/my-schedule"
           element={

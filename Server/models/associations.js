@@ -5,6 +5,7 @@ const RoomLocation = require("./roomLocation.model");
 const Floor = require("./floor.model");
 const MapNode = require("./mapNode.model");
 const MapEdge = require("./mapEdge.model");
+const Message = require("./message.model");
 
 Room.hasMany(User, { foreignKey: "roomId" });
 User.belongsTo(Room, { foreignKey: "roomId" });
@@ -27,6 +28,12 @@ MapEdge.belongsTo(Floor, { foreignKey: "floorId" });
 MapNode.hasMany(MapEdge, { foreignKey: "fromNodeId", onDelete: "CASCADE" });
 MapNode.hasMany(MapEdge, { foreignKey: "toNodeId", onDelete: "CASCADE" });
 
+User.hasMany(Message, { foreignKey: "senderId", as: "sentMessages" });
+User.hasMany(Message, { foreignKey: "receiverId", as: "receivedMessages" });
+
+Message.belongsTo(User, { foreignKey: "senderId", as: "sender" });
+Message.belongsTo(User, { foreignKey: "receiverId", as: "receiver" });
+
 module.exports = {
   User,
   Room,
@@ -35,4 +42,5 @@ module.exports = {
   RoomLocation,
   MapNode,
   MapEdge,
+  Message,
 };

@@ -37,6 +37,7 @@ export default function MySchedule() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
+  const [professors, setProfessors] = useState([]);
 
   const navigate = useNavigate();
 
@@ -47,12 +48,18 @@ export default function MySchedule() {
       try {
         setLoading(true);
         setErr("");
-        const res = await API.get("/schedule/me");
-        const list = (res.data || []).map((x) => ({
+
+        const [scheduleRes, profRes] = await Promise.all([
+          API.get("/schedule/me"),
+          API.get("/users/professors"),
+        ]);
+
+        const list = (scheduleRes.data || []).map((x) => ({
           ...x,
           day: normalizeDay(x.day),
         }));
         setItems(list);
+        setProfessors(profRes.data || []);
       } catch (e) {
         setErr(e.response?.data?.error || "Failed to load schedule");
       } finally {
@@ -84,6 +91,18 @@ export default function MySchedule() {
         String(a.startTime || "").localeCompare(String(b.startTime || "")),
       );
   }, [items, selectedDay]);
+
+  const findProfessorByName = (name) => {
+    const clean = String(name || "")
+      .trim()
+      .toLowerCase();
+    return professors.find(
+      (p) =>
+        String(p.username || "")
+          .trim()
+          .toLowerCase() === clean,
+    );
+  };
 
   return (
     <div className="authPage">
@@ -176,16 +195,40 @@ export default function MySchedule() {
                       </td>
                       <td>{x.instructor}</td>
                       <td className="scheduleActionCell">
-                        {online ? (
-                          <span className="muted">No navigation</span>
-                        ) : (
-                          <button
-                            className="scheduleNavBtn"
-                            onClick={() => navigate(`/navigate/${x.roomCode}`)}
-                          >
-                            Navigate
-                          </button>
-                        )}
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "8px",
+                            flexWrap: "wrap",
+                          }}
+                        >
+                          {online ? (
+                            <span className="muted">No navigation</span>
+                          ) : (
+                            <button
+                              className="scheduleNavBtn"
+                              onClick={() =>
+                                navigate(`/navigate/${x.roomCode}`)
+                              }
+                            >
+                              Navigate
+                            </button>
+                          )}
+
+                          {(() => {
+                            const prof = findProfessorByName(x.instructor);
+                            if (!prof) return null;
+
+                            return (
+                              <button
+                                className="scheduleNavBtn"
+                                onClick={() => navigate(`/chat/${prof.id}`)}
+                              >
+                                Chat
+                              </button>
+                            );
+                          })()}
+                        </div>
                       </td>
                     </tr>
                   );

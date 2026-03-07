@@ -5,6 +5,8 @@ const userRouter = require("./routes/user.route");
 const roomRouter = require("./routes/room.route");
 const scheduleRouter = require("./routes/schedule.route");
 const mapsRouter = require("./routes/maps.route");
+const messageRouter = require("./routes/message.route");
+
 require("./models/associations");
 
 const app = express();
@@ -19,5 +21,6 @@ app.use("/api/users", userRouter);
 app.use("/api/rooms", roomRouter);
 app.use("/api/schedule", scheduleRouter);
 app.use("/api/maps", mapsRouter);
+app.use("/api/messages", messageRouter);
 
 module.exports = app;

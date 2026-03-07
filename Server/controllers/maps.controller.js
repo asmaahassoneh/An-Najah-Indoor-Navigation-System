@@ -543,6 +543,45 @@ class MapsController {
       return res.status(500).json({ error: e.message });
     }
   }
+  static async bulkUpsertRoomLocations(req, res) {
+    try {
+      const { floorId } = req.params;
+      const floorIdNum = Number(floorId);
+
+      const rooms = req.body?.rooms;
+      if (!floorIdNum || !Array.isArray(rooms) || rooms.length === 0) {
+        return res.status(400).json({
+          error: "floorId param and body.rooms (non-empty array) are required",
+        });
+      }
+
+      const rows = rooms
+        .map((r) => ({
+          floorId: floorIdNum,
+          roomCode: String(r.roomCode || "").trim(),
+          x: Number(r.x),
+          y: Number(r.y),
+        }))
+        .filter(
+          (r) => r.roomCode && Number.isFinite(r.x) && Number.isFinite(r.y),
+        );
+
+      if (!rows.length) {
+        return res.status(400).json({ error: "No valid room rows to import" });
+      }
+
+      await RoomLocation.bulkCreate(rows, {
+        updateOnDuplicate: ["x", "y"],
+      });
+
+      return res.json({
+        message: "Room locations imported",
+        count: rows.length,
+      });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
 }
 
 module.exports = MapsController;

@@ -211,6 +211,35 @@ class UserController {
       return res.status(400).json({ error: error.message });
     }
   }
+  static async getProfessors(req, res) {
+    try {
+      const users = await UserService.getUsersByRole("professor");
+      res.json(users);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+  static async getChatUserById(req, res) {
+    try {
+      const { id } = req.params;
+      const user = await UserService.getUserById(id);
+
+      if (!user) return res.status(404).json({ error: "User not found" });
+
+      if (!["student", "professor"].includes(user.role)) {
+        return res.status(403).json({ error: "Invalid chat user" });
+      }
+
+      return res.json({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = UserController;

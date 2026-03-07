@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { useContext } from "react";
 import { AuthContext } from "../context/auth.context";
+import { Mail } from "lucide-react";
 import "../styles/navbar.css";
 
 export default function Navbar() {
@@ -16,7 +17,12 @@ export default function Navbar() {
           <NavLink to="/">Home</NavLink>
 
           {user && (user.role === "student" || user.role === "professor") && (
-            <NavLink to="/my-schedule">My Schedule</NavLink>
+            <>
+              <NavLink to="/my-schedule">My Schedule</NavLink>
+              <NavLink to="/inbox" className="navIcon">
+                <Mail size={20} />
+              </NavLink>{" "}
+            </>
           )}
           {!user && <NavLink to="/register">Register</NavLink>}
           {!user && <NavLink to="/login">Login</NavLink>}
