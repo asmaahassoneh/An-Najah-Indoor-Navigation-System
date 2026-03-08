@@ -2,30 +2,38 @@ import { useContext, useEffect, useMemo, useState, useCallback } from "react";
 import { AuthContext } from "../context/auth.context";
 import { useNavigate } from "react-router-dom";
 import { messagesApi } from "../services/messagesApi";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 export default function Inbox() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [err, setErr] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const { user } = useContext(AuthContext);
   const currentUserId = Number(user?.id);
 
   const navigate = useNavigate();
-  const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const deleteChat = async (otherUserId) => {
+  const deleteChat = async () => {
+    if (!deleteTarget) return;
+
     try {
-      await messagesApi.deleteConversation(otherUserId);
+      setDeleteLoading(true);
+
+      await messagesApi.deleteConversation(deleteTarget);
 
       setItems((prev) =>
-        prev.filter((item) => Number(item.user?.id) !== Number(otherUserId)),
+        prev.filter((item) => Number(item.user?.id) !== Number(deleteTarget)),
       );
 
       setDeleteTarget(null);
     } catch (e) {
       alert(e.response?.data?.error || "Failed to delete conversation");
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -222,32 +230,21 @@ export default function Inbox() {
             </div>
           </>
         )}
-
-        {deleteTarget && (
-          <div className="confirmOverlay">
-            <div className="confirmCard">
-              <h3>Delete Conversation</h3>
-              <p>This chat will be permanently deleted.</p>
-
-              <div className="confirmActions">
-                <button
-                  className="authBtn authBtnSecondary"
-                  onClick={() => setDeleteTarget(null)}
-                >
-                  Cancel
-                </button>
-
-                <button
-                  className="deleteChatBtn"
-                  onClick={() => deleteChat(deleteTarget)}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Delete Conversation"
+        message="This chat will be permanently deleted."
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={deleteChat}
+        onCancel={() => {
+          if (!deleteLoading) setDeleteTarget(null);
+        }}
+        loading={deleteLoading}
+        danger
+      />
     </div>
   );
 }

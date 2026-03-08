@@ -490,7 +490,12 @@
   background: #0f172a;
   color: white;
 }
-
+.admin-input,
+.admin-select {
+  height: 42px;
+  padding: 0 12px;
+  padding-right: 10px;
+}
 .admin-form {
   padding: 20px;
   border-radius: 18px;
@@ -703,7 +708,6 @@
     rgba(56, 52, 65, 0.75),
     rgba(104, 94, 135, 0.75)
   );
-  border-color: rgba(143, 92, 255, 0.4);
 }
 
 .gbBtnDanger {
@@ -863,6 +867,11 @@
 .editRoomBtn:hover {
   transform: translateY(-2px);
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(
+    135deg,
+    rgba(56, 52, 65, 0.75),
+    rgba(104, 94, 135, 0.75)
+  );
 }
 
 .editRoomBtnSoft {
@@ -994,9 +1003,9 @@
 .usersCancelBtn,
 .usersEditBtn {
   background: linear-gradient(
-    180deg,
-    rgba(124, 92, 255, 0.92),
-    rgba(90, 51, 214, 0.92)
+    135deg,
+    rgba(56, 52, 65, 0.75),
+    rgba(104, 94, 135, 0.75)
   );
   color: #fff;
 }
@@ -1015,4 +1024,8 @@
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
+}
+
+.users-page {
+  padding-top: 95px;
 }

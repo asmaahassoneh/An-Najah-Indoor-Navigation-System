@@ -127,7 +127,7 @@ export default function AdminRooms() {
               <option value="other">other</option>
             </select>
 
-            <button type="submit" className="action-btn">
+            <button type="submit" className="editRoomBtn gbBtnGhost">
               Add Room
             </button>
           </div>
@@ -148,10 +148,10 @@ export default function AdminRooms() {
           <table className="users-table">
             <thead>
               <tr>
-                <th>Code</th>
-                <th>Type</th>
                 <th>Faculty</th>
                 <th>Floor</th>
+                <th>Code</th>
+                <th>Type</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -168,6 +168,7 @@ export default function AdminRooms() {
                       {isEditing ? (
                         <input
                           className="admin-input"
+                          style={{ width: "140px" }}
                           value={form.code}
                           onChange={(e) =>
                             setForm((p) => ({ ...p, code: e.target.value }))
@@ -203,7 +204,7 @@ export default function AdminRooms() {
                         <div className="admin-actions">
                           <button
                             type="button"
-                            className="action-btn"
+                            className="editRoomBtn gbBtnGhost"
                             onClick={() => saveEdit(r.id)}
                           >
                             Save
@@ -211,7 +212,7 @@ export default function AdminRooms() {
 
                           <button
                             type="button"
-                            className="action-btn admin-btn-ghost"
+                            className="editRoomBtn gbBtnGhost usersEditBtn"
                             onClick={cancelEdit}
                           >
                             Cancel

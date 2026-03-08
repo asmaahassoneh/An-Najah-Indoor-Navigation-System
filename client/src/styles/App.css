@@ -714,7 +714,6 @@ button:hover {
   background: rgba(5, 10, 22, 0.56);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  animation: confirmFadeIn 0.18s ease;
 }
 
 .confirmCard {
@@ -727,11 +726,8 @@ button:hover {
     rgba(22, 30, 58, 0.98)
   );
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 22px 60px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.35);
   color: #fff;
-  animation: confirmPopIn 0.22s ease;
 }
 
 .confirmTitle {
@@ -751,11 +747,22 @@ button:hover {
   justify-content: flex-end;
   gap: 12px;
   margin-top: 22px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
+.confirmActions button,
+.confirmBtn,
+.confirmDangerBtn {
+  width: auto;
+  min-width: 120px;
+  margin-top: 0;
+  grid-column: unset;
+  justify-self: unset;
+}
 .confirmBtn {
-  max-width: 110px;
+  width: auto;
+  min-width: 120px;
+  max-width: none;
 }
 
 .confirmDangerBtn {
