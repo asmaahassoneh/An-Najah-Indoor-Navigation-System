@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../context/auth.context";
 import { messagesApi } from "../services/messagesApi";
 import API from "../services/api";
+import "../styles/chat.css";
 
 export default function ChatPage() {
   const { userId } = useParams();
@@ -18,7 +19,6 @@ export default function ChatPage() {
 
   const currentUserId = useMemo(() => Number(user?.id), [user]);
   const otherUserId = useMemo(() => Number(userId), [userId]);
-
   const loadConversation = useCallback(async () => {
     try {
       setLoading(true);
@@ -69,11 +69,11 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="authPage">
+    <div className="authPage chatPageShell">
       <div className="authGlow" />
       <div className="authNoise" />
 
-      <div className="authCard authCardEnter scheduleCard">
+      <div className="authCard authCardEnter scheduleCard chatCard">
         <div className="scheduleTop">
           <div>
             <div className="authBadge">Chat</div>
@@ -81,13 +81,14 @@ export default function ChatPage() {
               {otherUser ? `Chat with ${otherUser.username}` : "Conversation"}
             </h2>
             <p className="authSub">
-              {otherUser ? `Role: ${otherUser.role}` : "Loading user..."}
+              {otherUser ? ` ${otherUser.role}` : "Loading user..."}
             </p>
           </div>
 
           <button
             className="authBtn authBtnSecondary scheduleBtn"
             onClick={() => navigate("/inbox")}
+            style={{ position: "relative", top: "-20px" }}
           >
             Back to Inbox
           </button>
@@ -97,19 +98,8 @@ export default function ChatPage() {
         {!!err && <p className="authMsg authErr">{err}</p>}
 
         {!loading && (
-          <>
-            <div
-              style={{
-                maxHeight: "420px",
-                overflowY: "auto",
-                border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: "16px",
-                padding: "14px",
-                display: "grid",
-                gap: "10px",
-                background: "rgba(255,255,255,0.03)",
-              }}
-            >
+          <div className="chatMain">
+            <div className="chatMessagesBox">
               {messages.length === 0 && (
                 <p className="authMsg">No messages yet. Start the chat.</p>
               )}
@@ -120,29 +110,10 @@ export default function ChatPage() {
                 return (
                   <div
                     key={msg.id}
-                    style={{
-                      display: "flex",
-                      justifyContent: mine ? "flex-end" : "flex-start",
-                    }}
+                    className={`chatRow ${mine ? "mine" : "theirs"}`}
                   >
-                    <div
-                      style={{
-                        maxWidth: "75%",
-                        padding: "10px 14px",
-                        borderRadius: "14px",
-                        background: mine
-                          ? "rgba(124,255,178,0.16)"
-                          : "rgba(255,255,255,0.08)",
-                        border: "1px solid rgba(255,255,255,0.08)",
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: 12,
-                          opacity: 0.7,
-                          marginBottom: 6,
-                        }}
-                      >
+                    <div className={`chatBubble ${mine ? "mine" : "theirs"}`}>
+                      <div className="chatSender">
                         {mine
                           ? "You"
                           : (msg.sender?.username ??
@@ -150,15 +121,9 @@ export default function ChatPage() {
                             "User")}
                       </div>
 
-                      <div style={{ whiteSpace: "pre-wrap" }}>{msg.text}</div>
+                      <div className="chatText">{msg.text}</div>
 
-                      <div
-                        style={{
-                          fontSize: 11,
-                          opacity: 0.6,
-                          marginTop: 6,
-                        }}
-                      >
+                      <div className="chatTime">
                         {msg.createdAt
                           ? new Date(msg.createdAt).toLocaleString()
                           : ""}
@@ -169,19 +134,16 @@ export default function ChatPage() {
               })}
             </div>
 
-            <form
-              onSubmit={send}
-              style={{ marginTop: 16, display: "grid", gap: 12 }}
-            >
+            <form onSubmit={send} className="chatForm">
               <textarea
-                className="importTextarea"
-                rows={4}
+                className="chatTextarea importTextarea"
+                rows={2}
                 placeholder="Write a message..."
                 value={text}
                 onChange={(e) => setText(e.target.value)}
               />
 
-              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <div className="chatActions">
                 <button
                   className="authBtn authBtnEnter"
                   type="submit"
@@ -192,7 +154,7 @@ export default function ChatPage() {
                 </button>
               </div>
             </form>
-          </>
+          </div>
         )}
       </div>
     </div>

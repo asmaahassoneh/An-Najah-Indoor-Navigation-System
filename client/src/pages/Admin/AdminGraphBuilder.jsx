@@ -9,6 +9,7 @@ import {
 } from "react-konva";
 import useImage from "use-image";
 import API from "../../services/api";
+import ConfirmDialog from "../../components/ConfirmDialog";
 
 export default function AdminGraphBuilder() {
   const [roomCode, setRoomCode] = useState("");
@@ -23,6 +24,14 @@ export default function AdminGraphBuilder() {
   const [nodeType, setNodeType] = useState("hall");
   const [nodeLabel, setNodeLabel] = useState("");
 
+  const [confirmState, setConfirmState] = useState({
+    open: false,
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
   const floor = useMemo(
     () => floors.find((f) => String(f.id) === String(floorId)) || null,
     [floors, floorId],
@@ -32,6 +41,36 @@ export default function AdminGraphBuilder() {
 
   const stageW = floor?.width || 1200;
   const stageH = floor?.height || 800;
+
+  const openConfirm = ({ title, message, onConfirm }) => {
+    setConfirmState({
+      open: true,
+      title,
+      message,
+      onConfirm,
+    });
+  };
+
+  const closeConfirm = () => {
+    if (confirmLoading) return;
+    setConfirmState({
+      open: false,
+      title: "",
+      message: "",
+      onConfirm: null,
+    });
+  };
+
+  const handleConfirm = async () => {
+    if (!confirmState.onConfirm) return;
+    try {
+      setConfirmLoading(true);
+      await confirmState.onConfirm();
+      closeConfirm();
+    } finally {
+      setConfirmLoading(false);
+    }
+  };
 
   const reloadGraph = async () => {
     if (!floorId) return;
@@ -107,17 +146,22 @@ export default function AdminGraphBuilder() {
     }
   };
 
-  const clearAllNodes = async () => {
+  const requestClearAllNodes = () => {
     if (!floorId) return setMsg("Select a floor first");
-    if (!window.confirm("Delete ALL nodes and edges for this floor?")) return;
 
-    try {
-      await API.delete(`/maps/floors/${floorId}/graph`);
-      setMsg("All nodes cleared ✅");
-      await reloadGraph();
-    } catch (e) {
-      setMsg(e.response?.data?.error || "Failed to clear floor");
-    }
+    openConfirm({
+      title: "Clear Floor Graph",
+      message: "Delete all nodes and edges for this floor?",
+      onConfirm: async () => {
+        try {
+          await API.delete(`/maps/floors/${floorId}/graph`);
+          setMsg("All nodes cleared ✅");
+          await reloadGraph();
+        } catch (e) {
+          setMsg(e.response?.data?.error || "Failed to clear floor");
+        }
+      },
+    });
   };
 
   const connectAllNodesMST = async () => {
@@ -400,7 +444,7 @@ export default function AdminGraphBuilder() {
                   <button
                     className="gbBtn gbBtnSoft"
                     type="button"
-                    onClick={clearAllNodes}
+                    onClick={requestClearAllNodes}
                   >
                     Clear All
                   </button>
@@ -508,20 +552,26 @@ export default function AdminGraphBuilder() {
                     lineCap="round"
                     lineJoin="round"
                     opacity={0.9}
-                    onMouseDown={async (evt) => {
+                    onMouseDown={(evt) => {
                       if (mode !== "delete") return;
                       evt.cancelBubble = true;
 
-                      if (!window.confirm(`Delete edge ${edge.id}?`)) return;
-                      try {
-                        await API.delete(`/maps/edges/${edge.id}`);
-                        setMsg(`Edge ${edge.id} deleted ✅`);
-                        await reloadGraph();
-                      } catch (e) {
-                        setMsg(
-                          e.response?.data?.error || "Failed to delete edge",
-                        );
-                      }
+                      openConfirm({
+                        title: "Delete Edge",
+                        message: `Are you sure you want to delete edge ${edge.id}?`,
+                        onConfirm: async () => {
+                          try {
+                            await API.delete(`/maps/edges/${edge.id}`);
+                            setMsg(`Edge ${edge.id} deleted ✅`);
+                            await reloadGraph();
+                          } catch (e) {
+                            setMsg(
+                              e.response?.data?.error ||
+                                "Failed to delete edge",
+                            );
+                          }
+                        },
+                      });
                     }}
                   />
                 ))}
@@ -560,17 +610,22 @@ export default function AdminGraphBuilder() {
                           evt.cancelBubble = true;
 
                           if (mode === "delete") {
-                            if (!window.confirm(`Delete node ${n.id}?`)) return;
-                            try {
-                              await API.delete(`/maps/nodes/${n.id}`);
-                              setMsg(`Node ${n.id} deleted ✅`);
-                              await reloadGraph();
-                            } catch (e) {
-                              setMsg(
-                                e.response?.data?.error ||
-                                  "Failed to delete node",
-                              );
-                            }
+                            openConfirm({
+                              title: "Delete Node",
+                              message: `Are you sure you want to delete node ${n.id}?`,
+                              onConfirm: async () => {
+                                try {
+                                  await API.delete(`/maps/nodes/${n.id}`);
+                                  setMsg(`Node ${n.id} deleted ✅`);
+                                  await reloadGraph();
+                                } catch (e) {
+                                  setMsg(
+                                    e.response?.data?.error ||
+                                      "Failed to delete node",
+                                  );
+                                }
+                              },
+                            });
                             return;
                           }
 
@@ -611,6 +666,18 @@ export default function AdminGraphBuilder() {
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmState.open}
+        title={confirmState.title}
+        message={confirmState.message}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleConfirm}
+        onCancel={closeConfirm}
+        loading={confirmLoading}
+        danger
+      />
     </div>
   );
 }

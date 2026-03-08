@@ -13,6 +13,21 @@ export default function Inbox() {
   const currentUserId = Number(user?.id);
 
   const navigate = useNavigate();
+  const [deleteTarget, setDeleteTarget] = useState(null);
+
+  const deleteChat = async (otherUserId) => {
+    try {
+      await messagesApi.deleteConversation(otherUserId);
+
+      setItems((prev) =>
+        prev.filter((item) => Number(item.user?.id) !== Number(otherUserId)),
+      );
+
+      setDeleteTarget(null);
+    } catch (e) {
+      alert(e.response?.data?.error || "Failed to delete conversation");
+    }
+  };
 
   const loadInbox = useCallback(async (silent = false) => {
     try {
@@ -103,12 +118,19 @@ export default function Inbox() {
           <td>
             {last?.createdAt ? new Date(last.createdAt).toLocaleString() : "-"}
           </td>
-          <td>
+          <td style={{ display: "flex", gap: "8px" }}>
             <button
               className="scheduleNavBtn"
               onClick={() => navigate(`/chat/${other.id}`)}
             >
               Open Chat
+            </button>
+
+            <button
+              className="delete-btn-inbox"
+              onClick={() => setDeleteTarget(other.id)}
+            >
+              Delete
             </button>
           </td>
         </tr>
@@ -125,13 +147,13 @@ export default function Inbox() {
           <div>
             <div className="authBadge">Messages</div>
             <h2 className="scheduleTitle">Inbox</h2>
-            <p className="authSub">Your student / professor conversations</p>
           </div>
 
           <button
             className="authBtn authBtnSecondary scheduleBtn"
             onClick={() => loadInbox(true)}
             disabled={refreshing}
+            style={{ position: "relative", top: "-15px" }}
           >
             {refreshing ? "Refreshing..." : "Refresh"}
           </button>
@@ -199,6 +221,31 @@ export default function Inbox() {
               </table>
             </div>
           </>
+        )}
+
+        {deleteTarget && (
+          <div className="confirmOverlay">
+            <div className="confirmCard">
+              <h3>Delete Conversation</h3>
+              <p>This chat will be permanently deleted.</p>
+
+              <div className="confirmActions">
+                <button
+                  className="authBtn authBtnSecondary"
+                  onClick={() => setDeleteTarget(null)}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  className="deleteChatBtn"
+                  onClick={() => deleteChat(deleteTarget)}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>

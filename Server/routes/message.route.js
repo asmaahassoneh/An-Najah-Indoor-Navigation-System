@@ -10,5 +10,6 @@ router.post("/", MessageController.send);
 router.get("/inbox", MessageController.getInbox);
 router.get("/conversation/:userId", MessageController.getConversation);
 router.put("/conversation/:userId/read", MessageController.markRead);
+router.delete("/conversation/:userId", MessageController.deleteConversation);
 
 module.exports = router;

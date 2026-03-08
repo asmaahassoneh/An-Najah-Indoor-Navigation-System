@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 import { AuthContext } from "../context/auth.context";
 import PasswordInput from "../components/PasswordInput";
+import "../styles/reset-password.css";
 
 export default function ResetPassword() {
   const { user } = useContext(AuthContext);
@@ -56,10 +57,7 @@ export default function ResetPassword() {
         <div className="authGlow" />
         <div className="authNoise" />
 
-        <div
-          className="authCard authCardEnter"
-          style={{ width: "min(520px, 92vw)" }}
-        >
+        <div className="authCard authCardEnter resetCard resetCardSmall">
           <div className="authTop">
             <div className="authBadge">Restricted</div>
             <h2 className="authTitle">Not Authorized</h2>
@@ -83,19 +81,15 @@ export default function ResetPassword() {
       <div className="authGlow" />
       <div className="authNoise" />
 
-      <div
-        className="authCard authCardEnter"
-        style={{ width: "min(520px, 92vw)" }}
-      >
-        <div className="authTop">
+      <div className="authCard authCardEnter resetCard">
+        <div className="authTop resetTop">
           <div className="authBadge">Security</div>
           <h2 className="authTitle">Reset Password</h2>
-          <p className="authSub">Update your password securely.</p>
         </div>
 
-        <form className="authForm" onSubmit={handleSubmit}>
-          <div className="field fieldEnter" style={{ animationDelay: "80ms" }}>
-            <div className="authPasswordWrap">
+        <form className="authForm resetForm" onSubmit={handleSubmit}>
+          <div className="resetGrid">
+            <div className="resetField">
               <PasswordInput
                 name="oldPassword"
                 label="Old Password"
@@ -105,11 +99,8 @@ export default function ResetPassword() {
                 required
               />
             </div>
-            <span className="fieldGlow" />
-          </div>
 
-          <div className="field fieldEnter" style={{ animationDelay: "140ms" }}>
-            <div className="authPasswordWrap">
+            <div className="resetField">
               <PasswordInput
                 name="newPassword"
                 label="New Password"
@@ -119,11 +110,8 @@ export default function ResetPassword() {
                 required
               />
             </div>
-            <span className="fieldGlow" />
-          </div>
 
-          <div className="field fieldEnter" style={{ animationDelay: "200ms" }}>
-            <div className="authPasswordWrap">
+            <div className="resetField resetFieldFull">
               <PasswordInput
                 name="confirmPassword"
                 label="Confirm New Password"
@@ -133,28 +121,29 @@ export default function ResetPassword() {
                 required
               />
             </div>
-            <span className="fieldGlow" />
           </div>
 
-          <button
-            className="authBtn authBtnEnter"
-            type="submit"
-            disabled={loading}
-          >
-            <span className="btnShine" />
-            {loading ? "Updating..." : "Update Password"}
-          </button>
+          {!!error && <p className="resetMsg resetErr">{error}</p>}
+          {!!message && <p className="resetMsg resetOk">{message}</p>}
 
-          <button
-            type="button"
-            className="authBtn authBtnSecondary"
-            onClick={() => navigate("/profile")}
-          >
-            Back to Profile
-          </button>
+          <div className="resetActions">
+            <button
+              className="authBtn authBtnEnter resetMainBtn"
+              type="submit"
+              disabled={loading}
+            >
+              <span className="btnShine" />
+              {loading ? "Updating..." : "Update Password"}
+            </button>
 
-          {!!error && <p className="authMsg authErr">{error}</p>}
-          {!!message && <p className="authMsg authOk">{message}</p>}
+            <button
+              type="button"
+              className="authBtn authBtnSecondary resetSecondaryBtn"
+              onClick={() => navigate("/profile")}
+            >
+              Back to Profile
+            </button>
+          </div>
         </form>
       </div>
     </div>

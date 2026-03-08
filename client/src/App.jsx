@@ -4,6 +4,9 @@ import "./styles/auth-animated.css";
 import "./styles/admin.css";
 import "./styles/schedule.css";
 import "./styles/MapNavigate.css";
+import "./styles/sidebar.css";
+import "./styles/reset-password.css";
+import "./styles/chat.css";
 
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
@@ -27,6 +30,7 @@ import MapNavigate from "./pages/MapNavigate";
 import AdminGraphBuilder from "./pages/Admin/AdminGraphBuilder";
 import Inbox from "./pages/Inbox";
 import ChatPage from "./pages/ChatPage";
+import Settings from "./pages/Settings";
 
 export default function App() {
   return (
@@ -34,6 +38,7 @@ export default function App() {
       <Navbar />
 
       <Routes>
+        <Route path="/settings" element={<Settings />} />
         <Route
           path="/inbox"
           element={

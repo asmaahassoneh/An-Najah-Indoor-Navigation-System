@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import API from "../../services/api";
+import ConfirmDialog from "../../components/ConfirmDialog";
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -13,6 +14,9 @@ export default function AdminUsers() {
     role: "",
     roomCode: "",
   });
+
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -28,9 +32,7 @@ export default function AdminUsers() {
   }, []);
 
   useEffect(() => {
-    (async () => {
-      await fetchUsers();
-    })();
+    fetchUsers();
   }, [fetchUsers]);
 
   const startEdit = (user) => {
@@ -49,24 +51,46 @@ export default function AdminUsers() {
   };
 
   const saveEdit = async (id) => {
-    await API.put(`/users/id/${id}`, {
-      username: form.username,
-      email: form.email,
-    });
+    try {
+      setErr("");
 
-    if (form.role === "professor") {
-      await API.put(`/users/id/${id}/room`, {
-        roomCode: form.roomCode,
+      await API.put(`/users/id/${id}`, {
+        username: form.username,
+        email: form.email,
       });
-    }
 
-    setEditingId(null);
-    fetchUsers();
+      if (form.role === "professor") {
+        await API.put(`/users/id/${id}/room`, {
+          roomCode: form.roomCode,
+        });
+      }
+
+      setEditingId(null);
+      fetchUsers();
+    } catch (e) {
+      setErr(e.response?.data?.error || "Failed to update user");
+    }
   };
 
-  const deleteUser = async (id) => {
-    await API.delete(`/users/id/${id}`);
-    fetchUsers();
+  const requestDeleteUser = (user) => {
+    setDeleteTarget(user);
+  };
+
+  const confirmDeleteUser = async () => {
+    if (!deleteTarget) return;
+
+    try {
+      setDeleteLoading(true);
+      setErr("");
+
+      await API.delete(`/users/id/${deleteTarget.id}`);
+      setDeleteTarget(null);
+      fetchUsers();
+    } catch (e) {
+      setErr(e.response?.data?.error || "Failed to delete user");
+    } finally {
+      setDeleteLoading(false);
+    }
   };
 
   return (
@@ -98,9 +122,13 @@ export default function AdminUsers() {
                     <td>
                       {isEditing ? (
                         <input
+                          className="admin-input usersInlineInput"
                           value={form.username}
                           onChange={(e) =>
-                            setForm((p) => ({ ...p, username: e.target.value }))
+                            setForm((p) => ({
+                              ...p,
+                              username: e.target.value,
+                            }))
                           }
                         />
                       ) : (
@@ -111,9 +139,13 @@ export default function AdminUsers() {
                     <td>
                       {isEditing ? (
                         <input
+                          className="admin-input usersInlineInput"
                           value={form.email}
                           onChange={(e) =>
-                            setForm((p) => ({ ...p, email: e.target.value }))
+                            setForm((p) => ({
+                              ...p,
+                              email: e.target.value,
+                            }))
                           }
                         />
                       ) : (
@@ -124,9 +156,13 @@ export default function AdminUsers() {
                     <td>
                       {isEditing ? (
                         <input
+                          className="admin-input usersInlineInput"
                           value={form.role}
                           onChange={(e) =>
-                            setForm((p) => ({ ...p, role: e.target.value }))
+                            setForm((p) => ({
+                              ...p,
+                              role: e.target.value,
+                            }))
                           }
                         />
                       ) : (
@@ -137,9 +173,13 @@ export default function AdminUsers() {
                     <td>
                       {isEditing ? (
                         <input
+                          className="admin-input usersInlineInput"
                           value={form.roomCode}
                           onChange={(e) =>
-                            setForm((p) => ({ ...p, roomCode: e.target.value }))
+                            setForm((p) => ({
+                              ...p,
+                              roomCode: e.target.value,
+                            }))
                           }
                           placeholder="111170"
                         />
@@ -148,27 +188,44 @@ export default function AdminUsers() {
                       )}
                     </td>
 
-                    <td>
+                    <td className="usersActionsCell">
                       {isEditing ? (
-                        <>
-                          <button onClick={() => saveEdit(u.id)}>Save</button>
-                          <button onClick={cancelEdit}>Cancel</button>
-                        </>
-                      ) : (
-                        <button
-                          className="action-btn gbBtn gbBtnSoft"
-                          onClick={() => startEdit(u)}
-                        >
-                          Edit
-                        </button>
-                      )}
+                        <div className="usersActionsRow">
+                          <button
+                            type="button"
+                            className="usersActionBtn usersSaveBtn"
+                            onClick={() => saveEdit(u.id)}
+                          >
+                            Save
+                          </button>
 
-                      <button
-                        className="action-btn delete-btn gbBtnDanger"
-                        onClick={() => deleteUser(u.id)}
-                      >
-                        Delete
-                      </button>
+                          <button
+                            type="button"
+                            className="usersActionBtn usersCancelBtn"
+                            onClick={cancelEdit}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="usersActionsRow">
+                          <button
+                            type="button"
+                            className="usersActionBtn usersEditBtn"
+                            onClick={() => startEdit(u)}
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            type="button"
+                            className="usersActionBtn usersDeleteBtn"
+                            onClick={() => requestDeleteUser(u)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 );
@@ -176,13 +233,31 @@ export default function AdminUsers() {
 
               {users.length === 0 && (
                 <tr>
-                  <td colSpan={6}>No users found.</td>
+                  <td colSpan={5}>No users found.</td>
                 </tr>
               )}
             </tbody>
           </table>
         )}
       </div>
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Delete User"
+        message={
+          deleteTarget
+            ? `Are you sure you want to delete user "${deleteTarget.username}"?`
+            : ""
+        }
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={confirmDeleteUser}
+        onCancel={() => {
+          if (!deleteLoading) setDeleteTarget(null);
+        }}
+        loading={deleteLoading}
+        danger
+      />
     </div>
   );
 }

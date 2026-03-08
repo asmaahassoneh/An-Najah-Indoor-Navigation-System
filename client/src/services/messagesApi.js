@@ -9,4 +9,6 @@ export const messagesApi = {
     API.post("/messages", { receiverId, text }),
 
   markRead: (userId) => API.put(`/messages/conversation/${userId}/read`),
+  deleteConversation: (userId) =>
+    API.delete(`/messages/conversation/${userId}`),
 };

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import API from "../../services/api";
+import ConfirmDialog from "../../components/ConfirmDialog";
 
 export default function AdminRooms() {
   const [rooms, setRooms] = useState([]);
@@ -11,6 +12,9 @@ export default function AdminRooms() {
 
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState({ code: "", type: "lecture" });
+
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const fetchRooms = useCallback(async () => {
     try {
@@ -72,12 +76,22 @@ export default function AdminRooms() {
     }
   };
 
-  const deleteRoom = async (id) => {
+  const requestDeleteRoom = (room) => {
+    setDeleteTarget(room);
+  };
+
+  const confirmDeleteRoom = async () => {
+    if (!deleteTarget) return;
+
     try {
-      await API.delete(`/rooms/id/${id}`);
+      setDeleteLoading(true);
+      await API.delete(`/rooms/id/${deleteTarget.id}`);
+      setDeleteTarget(null);
       fetchRooms();
     } catch (e) {
       setErr(e.response?.data?.error || "Failed to delete room");
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -207,7 +221,7 @@ export default function AdminRooms() {
                         <div className="admin-actions">
                           <button
                             type="button"
-                            className="action-btn gbBtn gbBtnSoft"
+                            className="editRoomBtn gbBtnGhost"
                             onClick={() => startEdit(r)}
                           >
                             Edit
@@ -216,7 +230,7 @@ export default function AdminRooms() {
                           <button
                             type="button"
                             className="action-btn delete-btn gbBtnDanger"
-                            onClick={() => deleteRoom(r.id)}
+                            onClick={() => requestDeleteRoom(r)}
                           >
                             Delete
                           </button>
@@ -236,6 +250,24 @@ export default function AdminRooms() {
           </table>
         )}
       </div>
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Delete Room"
+        message={
+          deleteTarget
+            ? `Are you sure you want to delete room "${deleteTarget.code}"?`
+            : ""
+        }
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={confirmDeleteRoom}
+        onCancel={() => {
+          if (!deleteLoading) setDeleteTarget(null);
+        }}
+        loading={deleteLoading}
+        danger
+      />
     </div>
   );
 }

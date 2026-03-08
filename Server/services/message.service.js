@@ -131,6 +131,37 @@ class MessageService {
 
     return { message: "Conversation marked as read" };
   }
+
+  static async deleteConversation({ currentUserId, otherUserId }) {
+    if (Number(currentUserId) === Number(otherUserId)) {
+      throw new Error("Invalid conversation user");
+    }
+
+    const currentUser = await User.findByPk(currentUserId);
+    const otherUser = await User.findByPk(otherUserId);
+
+    if (!currentUser || !otherUser) {
+      throw new Error("User not found");
+    }
+
+    if (!this.isAllowedChat(currentUser.role, otherUser.role)) {
+      throw new Error("Chat is only allowed between professor and student");
+    }
+
+    const deletedCount = await Message.destroy({
+      where: {
+        [Op.or]: [
+          { senderId: currentUserId, receiverId: otherUserId },
+          { senderId: otherUserId, receiverId: currentUserId },
+        ],
+      },
+    });
+
+    return {
+      message: "Conversation deleted successfully",
+      deletedCount,
+    };
+  }
 }
 
 module.exports = MessageService;

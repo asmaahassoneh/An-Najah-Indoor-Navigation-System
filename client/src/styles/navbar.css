@@ -196,3 +196,12 @@
     font-size: 18px;
   }
 }
+.profile-trigger {
+  cursor: pointer;
+  padding: 0;
+}
+
+.profile-trigger svg {
+  font-size: inherit;
+  color: inherit;
+}

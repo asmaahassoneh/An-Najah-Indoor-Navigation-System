@@ -122,6 +122,7 @@ export default function MySchedule() {
           <button
             className="authBtn scheduleBtn"
             onClick={() => navigate("/import-schedule")}
+            style={{ position: "relative", top: "-20px" }}
           >
             <span className="btnShine" />
             Import / Update
