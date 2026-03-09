@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { Text, View, StyleSheet, Pressable, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 
@@ -21,9 +21,16 @@ function isOnlineRoom(code) {
   return v === "509999" || v.toUpperCase() === "ONLINE";
 }
 
+function normalizeName(v) {
+  return String(v || "")
+    .trim()
+    .toLowerCase();
+}
+
 function Inner() {
   const router = useRouter();
   const [items, setItems] = useState([]);
+  const [professors, setProfessors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
   const api = useApi();
@@ -32,8 +39,14 @@ function Inner() {
     try {
       setErr("");
       setLoading(true);
-      const res = await api.get("/schedule/me");
-      setItems(res.data || []);
+
+      const [scheduleRes, profRes] = await Promise.all([
+        api.get("/schedule/me"),
+        api.get("/users/professors"),
+      ]);
+
+      setItems(scheduleRes.data || []);
+      setProfessors(profRes.data || []);
     } catch (e) {
       setErr(e.response?.data?.error || "Failed to load schedule");
     } finally {
@@ -44,6 +57,14 @@ function Inner() {
   useEffect(() => {
     fetchSchedule();
   }, [fetchSchedule]);
+
+  const professorMap = useMemo(() => {
+    const map = new Map();
+    for (const p of professors) {
+      map.set(normalizeName(p.username), p);
+    }
+    return map;
+  }, [professors]);
 
   return (
     <Screen padded={false}>
@@ -82,6 +103,7 @@ function Inner() {
           <ScrollView style={{ marginTop: 12 }}>
             {items.map((x) => {
               const online = isOnlineRoom(x.roomCode);
+              const prof = professorMap.get(normalizeName(x.instructor));
 
               return (
                 <View key={x.id} style={styles.card}>
@@ -93,22 +115,41 @@ function Inner() {
 
                   <Text style={styles.meta}>Instructor: {x.instructor}</Text>
 
-                  {online ? (
-                    <Text style={styles.onlineNote}>
-                      Online class — no navigation
-                    </Text>
-                  ) : (
-                    <Pressable
-                      onPress={() => router.push(`/navigate/${x.roomCode}`)}
-                      style={[
-                        styles.btn,
-                        styles.btnSecondary,
-                        { marginTop: 10 },
-                      ]}
-                    >
-                      <Text style={styles.btnText}>Navigate</Text>
-                    </Pressable>
-                  )}
+                  <View style={styles.actionsRow}>
+                    {!online ? (
+                      <Pressable
+                        onPress={() => router.push(`/navigate/${x.roomCode}`)}
+                        style={[
+                          styles.btn,
+                          styles.btnSecondary,
+                          styles.flexBtn,
+                        ]}
+                      >
+                        <Text style={styles.btnText}>Navigate</Text>
+                      </Pressable>
+                    ) : (
+                      <View style={styles.flexBtn}>
+                        <Text style={styles.onlineNote}>
+                          Online class — no navigation
+                        </Text>
+                      </View>
+                    )}
+
+                    {prof ? (
+                      <Pressable
+                        onPress={() => router.push(`/chat/${prof.id}`)}
+                        style={[styles.btn, styles.flexBtn]}
+                      >
+                        <Text style={styles.btnText}>Chat</Text>
+                      </Pressable>
+                    ) : (
+                      <View style={styles.flexBtn}>
+                        <Text style={styles.onlineNote}>
+                          Professor not found
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                 </View>
               );
             })}
@@ -155,9 +196,18 @@ const styles = StyleSheet.create({
   course: { color: "white", fontSize: 16, fontWeight: "900" },
   meta: { color: "rgba(255,255,255,0.75)", marginTop: 4 },
 
-  onlineNote: {
+  actionsRow: {
+    flexDirection: "row",
+    gap: 10,
     marginTop: 10,
+    alignItems: "center",
+  },
+  flexBtn: {
+    flex: 1,
+  },
+  onlineNote: {
     color: "rgba(255,255,255,0.65)",
     fontWeight: "900",
+    marginTop: 12,
   },
 });

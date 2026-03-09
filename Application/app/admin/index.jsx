@@ -35,14 +35,12 @@ function Inner() {
               onPress={() => router.push("/admin/users")}
             >
               <Text style={styles.icon}>👤</Text>
-
               <View style={{ flex: 1 }}>
                 <Text style={styles.cardTitle}>Manage Users</Text>
                 <Text style={styles.cardSub}>
                   Edit usernames, emails, roles, room codes
                 </Text>
               </View>
-
               <Text style={styles.arrow}>→</Text>
             </Pressable>
 
@@ -51,14 +49,40 @@ function Inner() {
               onPress={() => router.push("/admin/rooms")}
             >
               <Text style={styles.icon}>🏫</Text>
-
               <View style={{ flex: 1 }}>
                 <Text style={styles.cardTitle}>Manage Rooms</Text>
                 <Text style={styles.cardSub}>
                   Create, update, delete room codes and types
                 </Text>
               </View>
+              <Text style={styles.arrow}>→</Text>
+            </Pressable>
 
+            <Pressable
+              style={styles.card}
+              onPress={() => router.push("/admin/floors")}
+            >
+              <Text style={styles.icon}>🗺️</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.cardTitle}>Manage Floors</Text>
+                <Text style={styles.cardSub}>
+                  Add floor maps, faculty, image size
+                </Text>
+              </View>
+              <Text style={styles.arrow}>→</Text>
+            </Pressable>
+
+            <Pressable
+              style={styles.card}
+              onPress={() => router.push("/admin/graph")}
+            >
+              <Text style={styles.icon}>🧭</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.cardTitle}>Build Navigation Graph</Text>
+                <Text style={styles.cardSub}>
+                  Add nodes and connect paths on floor maps
+                </Text>
+              </View>
               <Text style={styles.arrow}>→</Text>
             </Pressable>
           </View>
@@ -91,9 +115,7 @@ const styles = StyleSheet.create({
   },
   title: { color: "white", fontSize: 26, fontWeight: "900" },
   sub: { color: "rgba(255,255,255,0.75)", marginTop: 6 },
-
   grid: { marginTop: 14, gap: 12 },
-
   card: {
     flexDirection: "row",
     alignItems: "center",

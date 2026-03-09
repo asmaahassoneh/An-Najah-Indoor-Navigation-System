@@ -1,55 +1,72 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
-import { useContext } from "react";
+import { useState, useContext } from "react";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useRouter } from "expo-router";
+import { Feather } from "@expo/vector-icons";
+
 import { AuthContext } from "../context/auth.context";
+import ProfileSidebar from "./ProfileSidebar";
 
 export default function AppNavbar() {
   const router = useRouter();
   const { user } = useContext(AuthContext);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <View style={styles.nav}>
-      <Text style={styles.logo}>Navigation System</Text>
+    <>
+      <View style={styles.navbar}>
+        {/* LEFT */}
+        <View style={styles.left}>
+          {user && (
+            <Pressable
+              style={styles.iconBtn}
+              onPress={() => setSidebarOpen(true)}
+            >
+              <Feather name="menu" size={22} color="white" />
+            </Pressable>
+          )}
+        </View>
 
-      <View style={styles.links}>
-        <NavBtn label="Home" onPress={() => router.push("/")} />
+        {/* CENTER */}
+        <Text style={styles.logo}>Navigation System</Text>
 
-        {user && (user.role === "student" || user.role === "professor") && (
-          <NavBtn
-            label="My Schedule"
-            onPress={() => router.push("/my-schedule")}
-          />
-        )}
+        {/* RIGHT */}
+        <View style={styles.right}>
+          {user ? (
+            <Pressable style={styles.iconBtn} onPress={() => router.push("/")}>
+              <Feather name="home" size={22} color="white" />
+            </Pressable>
+          ) : (
+            <View style={styles.authBtns}>
+              <Pressable
+                style={styles.navBtn}
+                onPress={() => router.push("/login")}
+              >
+                <Text style={styles.navBtnText}>Login</Text>
+              </Pressable>
 
-        {!user && (
-          <NavBtn label="Register" onPress={() => router.push("/register")} />
-        )}
-        {!user && (
-          <NavBtn label="Login" onPress={() => router.push("/login")} />
-        )}
-
-        {user?.role === "admin" && (
-          <NavBtn label="Dashboard" onPress={() => router.push("/admin")} />
-        )}
-
-        {user && (
-          <NavBtn label="Profile" onPress={() => router.push("/profile")} />
-        )}
+              <Pressable
+                style={styles.navBtn}
+                onPress={() => router.push("/register")}
+              >
+                <Text style={styles.navBtnText}>Sign Up</Text>
+              </Pressable>
+            </View>
+          )}
+        </View>
       </View>
-    </View>
-  );
-}
 
-function NavBtn({ label, onPress }) {
-  return (
-    <Pressable onPress={onPress} style={styles.btn}>
-      <Text style={styles.btnText}>{label}</Text>
-    </Pressable>
+      {user && (
+        <ProfileSidebar
+          open={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
+      )}
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  nav: {
+  navbar: {
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
@@ -58,22 +75,53 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 10,
   },
-  logo: { color: "white", fontWeight: "800", fontSize: 16 },
-  links: {
+
+  left: {
+    minWidth: 60,
+  },
+
+  right: {
+    minWidth: 120,
+    alignItems: "flex-end",
+  },
+
+  authBtns: {
     flexDirection: "row",
-    flexWrap: "wrap",
     gap: 8,
-    justifyContent: "flex-end",
   },
-  btn: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+
+  logo: {
+    color: "white",
+    fontWeight: "900",
+    fontSize: 18,
+  },
+
+  iconBtn: {
+    width: 42,
+    height: 42,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.14)",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "rgba(255,255,255,0.06)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.08)",
   },
-  btnText: { color: "white", fontWeight: "700", fontSize: 12 },
+
+  navBtn: {
+    height: 36,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+
+  navBtnText: {
+    color: "white",
+    fontWeight: "800",
+    fontSize: 13,
+  },
 });
