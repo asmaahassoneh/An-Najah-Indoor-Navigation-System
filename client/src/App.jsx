@@ -7,6 +7,7 @@ import "./styles/MapNavigate.css";
 import "./styles/sidebar.css";
 import "./styles/reset-password.css";
 import "./styles/chat.css";
+import "./styles/search.css";
 
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
@@ -31,7 +32,7 @@ import AdminGraphBuilder from "./pages/Admin/AdminGraphBuilder";
 import Inbox from "./pages/Inbox";
 import ChatPage from "./pages/ChatPage";
 import Settings from "./pages/Settings";
-
+import SearchPage from "./pages/SearchPage";
 export default function App() {
   return (
     <div>
@@ -70,6 +71,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ImportSchedule />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/search"
+          element={
+            <ProtectedRoute>
+              <SearchPage />
             </ProtectedRoute>
           }
         />

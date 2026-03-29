@@ -1,0 +1,38 @@
+.roomInfoBlock {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.roomInfoTitle {
+  margin: 0 0 10px;
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.roomInfoEmpty {
+  margin: 0;
+  opacity: 0.75;
+  font-size: 0.92rem;
+}
+
+.roomInfoList {
+  display: grid;
+  gap: 10px;
+}
+
+.roomInfoItem {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.roomInfoMain {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.roomInfoSub {
+  font-size: 0.92rem;
+  opacity: 0.82;
+}

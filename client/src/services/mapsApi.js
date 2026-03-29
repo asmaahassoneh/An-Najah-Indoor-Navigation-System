@@ -15,4 +15,12 @@ export const mapsApi = {
     API.get("/maps/route-multi", {
       params: { fromFloorId, fromX, fromY, toRoom, prefer },
     }),
+
+  searchRooms: (q) =>
+    API.get("/maps/rooms/search", {
+      params: { q },
+    }),
+
+  roomDetails: (roomCode) =>
+    API.get(`/maps/rooms/details/${encodeURIComponent(roomCode)}`),
 };

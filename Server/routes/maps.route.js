@@ -11,6 +11,7 @@ router.get("/route", requireAuth, MapsController.routeToRoom);
 router.get("/room/:roomCode", MapsController.getRoomLocation);
 router.get("/route-multi", requireAuth, MapsController.routeMulti);
 router.get("/rooms/search", MapsController.searchRoomLocations);
+router.get("/rooms/details/:roomCode", MapsController.getRoomSearchDetails);
 
 router.post(
   "/floors",

@@ -1,10 +1,14 @@
 const {
   Floor,
+  Room,
   RoomLocation,
   MapNode,
   MapEdge,
+  User,
+  ScheduleItem,
 } = require("../models/associations");
 const { astar, dist } = require("../utils/astar");
+const { Op } = require("sequelize");
 
 function nearestNode(nodes, point) {
   let best = null;
@@ -525,8 +529,20 @@ class MapsController {
 
       const list = await RoomLocation.findAll({
         where: {
-          roomCode: { [require("sequelize").Op.iLike]: `%${q}%` },
+          roomCode: { [Op.iLike]: `%${q}%` },
         },
+        include: [
+          {
+            model: Floor,
+            attributes: ["id", "name", "faculty"],
+            required: false,
+          },
+          {
+            model: Room,
+            attributes: ["id", "code", "type", "faculty", "floor"],
+            required: false,
+          },
+        ],
         limit: 20,
         order: [["roomCode", "ASC"]],
       });
@@ -535,6 +551,9 @@ class MapsController {
         list.map((r) => ({
           roomCode: r.roomCode,
           floorId: r.floorId,
+          floorName: r.Floor?.name || null,
+          faculty: r.Floor?.faculty || r.Room?.faculty || null,
+          roomType: r.Room?.type || "other",
           x: r.x,
           y: r.y,
         })),
@@ -543,6 +562,7 @@ class MapsController {
       return res.status(500).json({ error: e.message });
     }
   }
+
   static async bulkUpsertRoomLocations(req, res) {
     try {
       const { floorId } = req.params;
@@ -577,6 +597,115 @@ class MapsController {
       return res.json({
         message: "Room locations imported",
         count: rows.length,
+      });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+  static async getRoomSearchDetails(req, res) {
+    try {
+      const roomCode = String(req.params.roomCode || "")
+        .trim()
+        .toUpperCase();
+
+      if (!roomCode) {
+        return res.status(400).json({ error: "roomCode is required" });
+      }
+
+      const room = await Room.findOne({
+        where: { code: roomCode },
+      });
+
+      const location = await RoomLocation.findOne({
+        where: { roomCode },
+        include: [
+          {
+            model: Floor,
+            attributes: ["id", "name", "faculty"],
+            required: false,
+          },
+        ],
+      });
+
+      if (!room && !location) {
+        return res.status(404).json({ error: "Room not found" });
+      }
+
+      const roomType = room?.type || "other";
+
+      let lectures = [];
+      let professors = [];
+
+      if (roomType === "lecture" || roomType === "lab") {
+        const rows = await ScheduleItem.findAll({
+          where: {
+            roomCode: {
+              [Op.iLike]: roomCode,
+            },
+          },
+          attributes: [
+            "courseCode",
+            "sectionCode",
+            "courseName",
+            "day",
+            "startTime",
+            "endTime",
+            "instructor",
+            "campus",
+          ],
+          order: [
+            ["day", "ASC"],
+            ["startTime", "ASC"],
+            ["courseName", "ASC"],
+          ],
+        });
+
+        const seen = new Set();
+
+        lectures = rows.filter((row) => {
+          const key = [
+            row.courseCode,
+            row.sectionCode,
+            row.day,
+            row.startTime,
+            row.endTime,
+            row.instructor,
+          ].join("|");
+
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+      }
+
+      if (roomType === "office" && room) {
+        professors = await User.findAll({
+          where: {
+            role: "professor",
+            roomId: room.id,
+          },
+          attributes: ["id", "username", "email", "hasRoom"],
+          order: [["username", "ASC"]],
+        });
+      }
+
+      return res.json({
+        room: {
+          code: room?.code || roomCode,
+          type: roomType,
+          faculty: room?.faculty || location?.Floor?.faculty || null,
+          floor: room?.floor || null,
+        },
+        location: location
+          ? {
+              floorId: location.floorId,
+              floorName: location.Floor?.name || null,
+              x: location.x,
+              y: location.y,
+            }
+          : null,
+        lectures,
+        professors,
       });
     } catch (e) {
       return res.status(500).json({ error: e.message });

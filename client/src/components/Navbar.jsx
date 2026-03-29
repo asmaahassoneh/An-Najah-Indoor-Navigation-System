@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/auth.context";
-import { Mail } from "lucide-react";
+import { Mail, Search } from "lucide-react";
 import ProfileSidebar from "./ProfileSidebar";
 import "../styles/navbar.css";
 
@@ -19,11 +19,15 @@ export default function Navbar() {
           <div className="links">
             <NavLink to="/">Home</NavLink>
 
+            <NavLink to="/search" className="navIcon" title="Search rooms">
+              <Search size={20} />
+            </NavLink>
+
             {user && (user.role === "student" || user.role === "professor") && (
               <>
                 <NavLink to="/my-schedule">My Schedule</NavLink>
 
-                <NavLink to="/inbox" className="navIcon">
+                <NavLink to="/inbox" className="navIcon" title="Inbox">
                   <Mail size={20} />
                 </NavLink>
               </>
@@ -38,6 +42,7 @@ export default function Navbar() {
                 type="button"
                 className="icon-link profile-trigger"
                 onClick={() => setSidebarOpen(true)}
+                title="Profile"
               >
                 <FaUserCircle />
               </button>
