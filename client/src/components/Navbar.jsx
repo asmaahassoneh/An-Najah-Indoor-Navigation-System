@@ -45,9 +45,20 @@ export default function Navbar() {
           <div className="links">
             <NavLink to="/">Home</NavLink>
 
-            <NavLink to="/search" className="navIcon" title="Search rooms">
-              <Search size={20} />
-            </NavLink>
+            {user &&
+              (user.role === "student" ||
+                user.role === "professor" ||
+                user.role === "guest") && (
+                <>
+                  <NavLink
+                    to="/search"
+                    className="navIcon"
+                    title="Search rooms"
+                  >
+                    <Search size={20} />
+                  </NavLink>
+                </>
+              )}
 
             {user && (user.role === "student" || user.role === "professor") && (
               <>

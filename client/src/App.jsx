@@ -8,6 +8,7 @@ import "./styles/sidebar.css";
 import "./styles/reset-password.css";
 import "./styles/chat.css";
 import "./styles/search.css";
+import "./styles/home.css";
 
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
