@@ -1,14 +1,40 @@
 import { NavLink } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
-import { useContext, useState } from "react";
+import { useEffect, useContext, useState } from "react";
 import { AuthContext } from "../context/auth.context";
 import { Mail, Search } from "lucide-react";
+import { messagesApi } from "../services/messagesApi";
 import ProfileSidebar from "./ProfileSidebar";
 import "../styles/navbar.css";
 
 export default function Navbar() {
   const { user } = useContext(AuthContext);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchUnread = async () => {
+      try {
+        const res = await messagesApi.getInbox();
+        const list = res.data || [];
+
+        const count = list.filter(
+          (m) => !m.readAt && m.senderId !== user.id,
+        ).length;
+
+        setUnreadCount(count);
+      } catch (e) {
+        console.error("Failed to fetch inbox", e);
+      }
+    };
+
+    fetchUnread();
+
+    const interval = setInterval(fetchUnread, 5000);
+    return () => clearInterval(interval);
+  }, [user]);
 
   return (
     <>
@@ -27,8 +53,26 @@ export default function Navbar() {
               <>
                 <NavLink to="/my-schedule">My Schedule</NavLink>
 
-                <NavLink to="/inbox" className="navIcon" title="Inbox">
-                  <Mail size={20} />
+                <NavLink to="/inbox" title="Inbox">
+                  <div className="icon-link navIcon">
+                    <div className="navIconWrapper">
+                      <Mail size={20} />
+
+                      {unreadCount > 0 && (
+                        <span
+                          className="navBadge"
+                          style={{
+                            background: "none",
+                            borderRadius: 0,
+                            border: "none",
+                            boxshadow: "none",
+                          }}
+                        >
+                          {unreadCount > 99 ? "99+" : unreadCount}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </NavLink>
               </>
             )}
