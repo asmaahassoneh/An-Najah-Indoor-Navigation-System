@@ -138,7 +138,7 @@ export default function ProfileSidebar({ open, onClose }) {
 
           <View style={styles.bottom}>
             <Pressable style={styles.logoutBtn} onPress={handleLogout}>
-              <LogOut color="#ff6b6b" size={20} />
+              <LogOut color="#f8e4e4" size={20} />
             </Pressable>
           </View>
         </Animated.View>
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(120, 30, 60, 0.45)",
+    backgroundColor: "rgba(255, 77, 77, 0.62)",
     borderWidth: 1,
     borderColor: "rgba(255, 107, 107, 0.18)",
   },

@@ -2,8 +2,10 @@ export const mapsApi = (api) => ({
   floors: () => api.get("/maps/floors"),
   floorGraph: (floorId) => api.get(`/maps/floors/${floorId}/graph`),
   floorRooms: (floorId) => api.get(`/maps/floors/${floorId}/rooms`),
+
   roomLocation: (roomCode) =>
     api.get(`/maps/room/${encodeURIComponent(roomCode)}`),
+
   routeMulti: ({ fromFloorId, fromX, fromY, toRoom, prefer }) =>
     api.get("/maps/route-multi", {
       params: {
@@ -14,4 +16,12 @@ export const mapsApi = (api) => ({
         prefer: prefer || "elevator",
       },
     }),
+
+  searchRooms: (q) =>
+    api.get("/maps/rooms/search", {
+      params: { q },
+    }),
+
+  roomDetails: (roomCode) =>
+    api.get(`/maps/rooms/details/${encodeURIComponent(roomCode)}`),
 });
